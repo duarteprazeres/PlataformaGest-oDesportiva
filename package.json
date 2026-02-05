@@ -1,0 +1,50 @@
+{
+  "name": "sports-management-saas",
+  "version": "1.0.0",
+  "description": "Multi-tenant SaaS platform for football club management",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "backend:dev": "cd apps/backend && npm run start:dev",
+    "backend:build": "cd apps/backend && npm run build",
+    "backend:start": "cd apps/backend && npm run start:prod",
+    "backend:test": "cd apps/backend && npm run test",
+    "backend:test:e2e": "cd apps/backend && npm run test:e2e",
+    "mobile:run:android": "cd apps/mobile && flutter run",
+    "mobile:run:ios": "cd apps/mobile && flutter run -d ios",
+    "mobile:build:android": "cd apps/mobile && flutter build apk",
+    "mobile:build:ios": "cd apps/mobile && flutter build ios",
+    "mobile:test": "cd apps/mobile && flutter test",
+    "prisma:generate": "cd apps/backend && npx prisma generate",
+    "prisma:studio": "cd apps/backend && npx prisma studio",
+    "prisma:migrate": "cd apps/backend && npx prisma migrate dev",
+    "prisma:migrate:prod": "cd apps/backend && npx prisma migrate deploy",
+    "prisma:seed": "cd apps/backend && npx prisma db seed",
+    "prisma:reset": "cd apps/backend && npx prisma migrate reset",
+    "db:setup": "docker-compose up -d postgres redis && sleep 5 && npm run prisma:migrate",
+    "db:seed": "npm run prisma:seed",
+    "db:reset": "sh scripts/db-reset.sh",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down",
+    "docker:logs": "docker compose logs -f",
+    "docker:clean": "docker compose down -v",
+    "install:all": "npm install && cd apps/backend && npm install",
+    "lint": "npm run lint --workspaces --if-present",
+    "format": "prettier --write \"**/*.{ts,tsx,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\"",
+    "test": "npm run test --workspaces --if-present",
+    "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules"
+  },
+  "devDependencies": {
+    "prettier": "^3.1.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^15.2.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}
