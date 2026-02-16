@@ -2,8 +2,8 @@
 
 **Projeto**: NovaScore - Plataforma SaaS de Gestão Desportiva  
 **Tecnologia**: NestJS + Prisma + PostgreSQL + Flutter  
-**Estado Atual**: MVP Avançado com Primeiros Utilizadores em Teste  
-**Gravidade**: CRÍTICA - Problemas de Segurança e Type Safety em Produção
+**Estado Atual**: Estabilizado - Pronto para Escala (Fase 1 & 2 Concluídas)  
+**Gravidade**: MODERADA - Problemas Críticos Resolvidos, Foco em Features e Testes
 
 ---
 
@@ -17,7 +17,7 @@ O projeto NovaScore encontra-se numa fase crítica: tem utilizadores reais a tes
 - Possibilidade de data corruption por falta de validação de inputs
 - Risco de breach de segurança por secrets default e configurações inadequadas
 
-**Conclusão Principal**: A arquitetura e design são sólidos, mas a implementação tem falhas críticas de segurança e qualidade que precisam de correção URGENTE antes de continuar a escalar.
+**Conclusão Principal**: A arquitetura estabilizou significativamente. Type safety estrito, segurança reforçada e pipeline de CI/CD estão implementados. O foco agora deve mudar para aumento de cobertura de testes e funcionalidades.
 
 ---
 
@@ -49,7 +49,8 @@ O sistema gere:
 
 ---
 
-## 🔴 PROBLEMA CRÍTICO #1: TYPESCRIPT TYPE SAFETY DESATIVADO
+## ✅ [RESOLVIDO] PROBLEMA CRÍTICO #1: TYPESCRIPT TYPE SAFETY DESATIVADO
+> **Status**: Resolvido em Fev 2026. `strict: true` ativado, 90+ erros corrigidos.
 
 ### Descrição Técnica do Problema
 
@@ -125,7 +126,8 @@ Baseado em projetos similares com configuração lax:
 
 ---
 
-## 🔴 PROBLEMA CRÍTICO #2: ESLINT PERMITE PRÁTICAS PERIGOSAS
+## ✅ [RESOLVIDO] PROBLEMA CRÍTICO #2: ESLINT PERMITE PRÁTICAS PERIGOSAS
+> **Status**: Resolvido. `no-explicit-any` agora é erro.
 
 ### Descrição Técnica do Problema
 
@@ -178,7 +180,8 @@ return await this.otherResult();
 
 ---
 
-## 🔴 PROBLEMA CRÍTICO #3: SECRETS E CONFIGURAÇÕES INSEGURAS
+## ✅ [RESOLVIDO] PROBLEMA CRÍTICO #3: SECRETS E CONFIGURAÇÕES INSEGURAS
+> **Status**: Resolvido. Fallbacks inseguros removidos. App falha se secrets não existirem.
 
 ### Descrição Técnica do Problema
 
@@ -329,7 +332,8 @@ Aceitar e processar dados não validados viola:
 
 ---
 
-## 🔴 PROBLEMA CRÍTICO #5: RATE LIMITING NÃO IMPLEMENTADO
+## ✅ [RESOLVIDO] PROBLEMA CRÍTICO #5: RATE LIMITING NÃO IMPLEMENTADO
+> **Status**: Resolvido. `ThrottlerModule` (100 req/min) e `Helmet` implementados.
 
 ### Descrição Técnica do Problema
 
@@ -373,7 +377,8 @@ Numa arquitectura multi-tenant, **um cliente malicioso afeta TODOS os outros clu
 
 ---
 
-## 🟠 PROBLEMA ALTO #1: ZERO COBERTURA DE TESTES
+## 🔄 [EM PROGRESSO] PROBLEMA ALTO #1: ZERO COBERTURA DE TESTES
+> **Status**: Em Progresso. Pipeline de testes ativa. AuthService coberto (100%). Outros módulos pendentes.
 
 ### Descrição Técnica do Problema
 
@@ -444,7 +449,8 @@ Para um projeto em produção com utilizadores reais:
 
 ---
 
-## 🟠 PROBLEMA ALTO #2: CI/CD PIPELINE INEXISTENTE
+## ✅ [RESOLVIDO] PROBLEMA ALTO #2: CI/CD PIPELINE INEXISTENTE
+> **Status**: Resolvido. GitHub Actions implementado para Build, Lint e Test em cada push.
 
 ### Descrição Técnica do Problema
 
