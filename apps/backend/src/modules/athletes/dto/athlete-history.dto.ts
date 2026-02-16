@@ -1,18 +1,18 @@
 export class ClubHistoryItemDto {
-    clubId: string;
-    clubName: string;
+    clubId!: string;
+    clubName!: string;
     teamName?: string;
-    joinedAt: Date;
+    joinedAt!: Date;
     leftAt?: Date;
-    matchesPlayed: number;
-    goalsScored: number;
+    matchesPlayed!: number;
+    goalsScored!: number;
 }
 
 export class AthleteHistoryDto {
-    athleteId: string;
-    athleteName: string;
-    clubs: ClubHistoryItemDto[];
-    totalClubs: number;
-    totalMatches: number;
-    totalGoals: number;
+    athleteId!: string;
+    athleteName!: string;
+    clubs!: ClubHistoryItemDto[];
+    totalClubs!: number;
+    totalMatches!: number;
+    totalGoals!: number;
 }

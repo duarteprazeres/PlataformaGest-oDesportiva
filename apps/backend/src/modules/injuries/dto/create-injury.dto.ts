@@ -3,18 +3,18 @@ import { MedicalStatus } from '@prisma/client';
 
 export class CreateInjuryDto {
     @IsUUID()
-    playerId: string;
+    playerId!: string;
 
     @IsEnum(MedicalStatus)
-    status: MedicalStatus;
+    status!: MedicalStatus;
 
     @IsString()
-    name: string;
+    name!: string;
 
     @IsOptional()
     @IsString()
     description?: string;
 
     @IsDateString()
-    startDate: string;
+    startDate!: string;
 }

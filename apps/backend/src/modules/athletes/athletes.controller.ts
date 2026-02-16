@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, UseGuards, Request, Query, UseInterceptors, UploadedFiles, BadRequestException } from '@nestjs/common';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { AthletesService } from './athletes.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -10,6 +10,7 @@ import { SearchAthleteDto } from './dto/search-athlete.dto';
 import { TerminateLinkDto } from './dto/terminate-link.dto';
 import { TransferRequestDto } from './dto/transfer-request.dto';
 import { multerOptions } from '../../common/storage/storage.config';
+import { RequestWithUser } from '../../common/interfaces/request-with-user.interface';
 
 @Controller('athletes')
 @UseGuards(JwtAuthGuard)
@@ -19,7 +20,8 @@ export class AthletesController {
     @Post('passport')
     @Roles(UserRole.PARENT)
     @UseGuards(RolesGuard)
-    async createPassport(@Request() req, @Body() body: CreatePassportDto) {
+    async createPassport(@Request() req: RequestWithUser, @Body() body: CreatePassportDto) {
+        if (!req.user.globalParentId) throw new BadRequestException('User is not a global parent');
         return this.athletesService.createPassport(req.user.globalParentId, body);
     }
 
@@ -31,21 +33,23 @@ export class AthletesController {
     @Get('my-athletes')
     @Roles(UserRole.PARENT)
     @UseGuards(RolesGuard)
-    async getMyAthletes(@Request() req) {
+    async getMyAthletes(@Request() req: RequestWithUser) {
+        if (!req.user.globalParentId) throw new BadRequestException('User is not a global parent');
         return this.athletesService.findAllByParent(req.user.globalParentId);
     }
 
     @Post('request-transfer')
     @Roles(UserRole.CLUB_ADMIN)
     @UseGuards(RolesGuard)
-    async requestTransfer(@Request() req, @Body() body: TransferRequestDto) {
+    async requestTransfer(@Request() req: RequestWithUser, @Body() body: TransferRequestDto) {
         return this.athletesService.requestTransfer(req.user.clubId, body.publicId);
     }
 
     @Patch('transfer-requests/:id/approve')
     @Roles(UserRole.PARENT)
     @UseGuards(RolesGuard)
-    async approveTransfer(@Request() req, @Param('id') requestId: string) {
+    async approveTransfer(@Request() req: RequestWithUser, @Param('id') requestId: string) {
+        if (!req.user.globalParentId) throw new BadRequestException('User is not a global parent');
         return this.athletesService.approveTransfer(req.user.globalParentId, requestId);
     }
 
@@ -73,14 +77,16 @@ export class AthletesController {
     @Post(':id/request-withdrawal')
     @Roles(UserRole.PARENT)
     @UseGuards(RolesGuard)
-    async requestWithdrawal(@Request() req, @Param('id') id: string) {
+    async requestWithdrawal(@Request() req: RequestWithUser, @Param('id') id: string) {
+        if (!req.user.globalParentId) throw new BadRequestException('User is not a global parent');
         return this.athletesService.requestWithdrawal(req.user.globalParentId, id);
     }
 
     @Post(':id/cancel-withdrawal')
     @Roles(UserRole.PARENT)
     @UseGuards(RolesGuard)
-    async cancelWithdrawal(@Request() req, @Param('id') id: string) {
+    async cancelWithdrawal(@Request() req: RequestWithUser, @Param('id') id: string) {
+        if (!req.user.globalParentId) throw new BadRequestException('User is not a global parent');
         return this.athletesService.cancelWithdrawal(req.user.globalParentId, id);
     }
 
@@ -92,7 +98,7 @@ export class AthletesController {
         { name: 'medicalCertificate', maxCount: 1 },
     ], multerOptions))
     async terminateLink(
-        @Request() req,
+        @Request() req: RequestWithUser,
         @Param('playerId') playerId: string,
         @Body() body: TerminateLinkDto,
         @UploadedFiles() files: { withdrawalLetter?: Express.Multer.File[], medicalCertificate?: Express.Multer.File[] }

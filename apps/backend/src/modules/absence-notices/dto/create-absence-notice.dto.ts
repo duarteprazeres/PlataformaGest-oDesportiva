@@ -1,15 +1,15 @@
-import { IsUUID, IsOptional, IsString, IsEnum } from 'class-validator';
+import { IsUUID, IsOptional, IsString } from 'class-validator';
 
 export class CreateAbsenceNoticeDto {
     @IsUUID()
-    athleteId: string;
+    athleteId!: string;
 
     @IsOptional()
     @IsUUID()
     playerId?: string;
 
     @IsUUID()
-    trainingId: string;
+    trainingId!: string;
 
     @IsString()
     @IsOptional()

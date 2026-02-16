@@ -1,5 +1,4 @@
-import { IsEnum, IsString, IsOptional, IsDateString } from 'class-validator';
-import { MedicalStatus } from '@prisma/client';
+import { IsString, IsOptional, IsDateString } from 'class-validator';
 
 export class UpdateInjuryDto {
     @IsOptional()

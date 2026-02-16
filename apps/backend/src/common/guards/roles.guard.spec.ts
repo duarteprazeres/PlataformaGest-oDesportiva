@@ -2,7 +2,7 @@
 import { RolesGuard } from './roles.guard';
 import { Reflector } from '@nestjs/core';
 import { ExecutionContext, ForbiddenException } from '@nestjs/common';
-import { UserRole } from '@prisma/client';
+
 
 describe('RolesGuard', () => {
     let rolesGuard: RolesGuard;

@@ -1,5 +1,5 @@
 
-import { PrismaClient, PlayerPosition } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
@@ -75,7 +75,7 @@ async function main() {
     });
 
     // 6. Create Player
-    const player = await prisma.player.create({
+    await prisma.player.create({
         data: {
             firstName: athlete.firstName,
             lastName: athlete.lastName,

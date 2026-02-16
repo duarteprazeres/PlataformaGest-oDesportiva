@@ -1,7 +1,3 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:3000';
-
 async function testRBAC() {
     console.log('🛡️  Testing RBAC Implementation...');
 

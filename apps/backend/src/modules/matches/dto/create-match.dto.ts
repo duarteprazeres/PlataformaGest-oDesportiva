@@ -3,11 +3,11 @@ import { IsBoolean, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class
 export class CreateMatchDto {
     @IsString()
     @IsNotEmpty()
-    teamId: string;
+    teamId!: string;
 
     @IsString()
     @IsNotEmpty()
-    opponentName: string;
+    opponentName!: string;
 
     @IsString()
     @IsOptional()
@@ -15,7 +15,7 @@ export class CreateMatchDto {
 
     @IsDateString()
     @IsNotEmpty()
-    matchDate: string; // ISO date string
+    matchDate!: string; // ISO date string
 
     @IsString()
     @IsOptional()
@@ -23,9 +23,9 @@ export class CreateMatchDto {
 
     @IsString()
     @IsNotEmpty()
-    location: string;
+    location!: string;
 
     @IsBoolean()
     @IsOptional()
-    isHomeMatch: boolean;
+    isHomeMatch!: boolean;
 }

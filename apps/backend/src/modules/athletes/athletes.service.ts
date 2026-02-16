@@ -244,9 +244,9 @@ export class AthletesService {
         if (!athlete) throw new NotFoundException('Athlete not found');
 
         // Aggregate history from all player records
-        const clubs = athlete.players.map(player => {
+        const clubs = athlete.players.map((player: any) => {
             const totalMatches = player.matchCallups.length;
-            const totalGoals = player.matchCallups.reduce((sum, m) => sum + m.goalsScored, 0);
+            const totalGoals = player.matchCallups.reduce((sum: number, m: any) => sum + m.goalsScored, 0);
 
             // Get the latest team history or current team
             const latestHistory = player.teamHistory[0];
@@ -262,8 +262,8 @@ export class AthletesService {
             };
         });
 
-        const totalMatches = athlete.players.flatMap(p => p.matchCallups).length;
-        const totalGoals = athlete.players.flatMap(p => p.matchCallups).reduce((sum, m) => sum + m.goalsScored, 0);
+        const totalMatches = athlete.players.flatMap((p: any) => p.matchCallups).length;
+        const totalGoals = athlete.players.flatMap((p: any) => p.matchCallups).reduce((sum: number, m: any) => sum + m.goalsScored, 0);
 
         return {
             athleteId: athlete.id,
@@ -353,24 +353,24 @@ export class AthletesService {
 
         if (!athlete) throw new NotFoundException('Athlete not found');
 
-        const allCallups = athlete.players.flatMap(p => p.matchCallups);
+        const allCallups = athlete.players.flatMap((p: any) => p.matchCallups);
 
         const totalMatches = allCallups.length;
-        const totalGoals = allCallups.reduce((sum, m) => sum + m.goalsScored, 0);
+        const totalGoals = allCallups.reduce((sum: number, m: any) => sum + m.goalsScored, 0);
 
         // Calculate average coach rating
-        const ratingsWithValues = allCallups.filter(m => m.coachRating !== null);
+        const ratingsWithValues = allCallups.filter((m: any) => m.coachRating !== null);
         const avgRating = ratingsWithValues.length > 0
-            ? ratingsWithValues.reduce((sum, m) => sum + Number(m.coachRating), 0) / ratingsWithValues.length
+            ? ratingsWithValues.reduce((sum: number, m: any) => sum + Number(m.coachRating), 0) / ratingsWithValues.length
             : null;
 
-        const uniqueClubs = new Set(athlete.players.map(p => p.club.id));
-        const uniqueTeams = new Set(athlete.players.flatMap(p =>
-            [...p.teamHistory.map(h => h.teamId), p.currentTeam?.id].filter(Boolean)
+        const uniqueClubs = new Set(athlete.players.map((p: any) => p.club.id));
+        const uniqueTeams = new Set(athlete.players.flatMap((p: any) =>
+            [...p.teamHistory.map((h: any) => h.teamId), p.currentTeam?.id].filter(Boolean)
         ));
 
         const firstRegistration = athlete.players.length > 0
-            ? new Date(Math.min(...athlete.players.map(p => p.createdAt.getTime())))
+            ? new Date(Math.min(...athlete.players.map((p: any) => p.createdAt.getTime())))
             : null;
 
         const yearsActive = firstRegistration
@@ -378,7 +378,7 @@ export class AthletesService {
             : 0;
 
         // Determine current status
-        const activePlayer = athlete.players.find(p => p.status === 'ACTIVE' || p.status === 'PENDING_WITHDRAWAL');
+        const activePlayer = athlete.players.find((p: any) => p.status === 'ACTIVE' || p.status === 'PENDING_WITHDRAWAL');
         const currentStatus = activePlayer ? activePlayer.status : 'FREE_AGENT';
 
         return {

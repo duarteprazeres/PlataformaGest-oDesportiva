@@ -2,22 +2,22 @@ import { IsBoolean, IsNumber, IsOptional, IsString, Max, Min } from 'class-valid
 
 export class UpdateCallupStatsDto {
     @IsBoolean()
-    played: boolean;
+    played!: boolean;
 
     @IsNumber()
     @Min(0)
-    minutesPlayed: number;
+    minutesPlayed!: number;
 
     @IsNumber()
     @Min(0)
-    goalsScored: number;
+    goalsScored!: number;
 
     @IsNumber()
     @Min(0)
-    yellowCards: number;
+    yellowCards!: number;
 
     @IsBoolean()
-    redCard: boolean;
+    redCard!: boolean;
 
     @IsNumber()
     @IsOptional()

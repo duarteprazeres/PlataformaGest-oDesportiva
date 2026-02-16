@@ -1,4 +1,3 @@
-import { DiskStorageOptions } from 'multer';
 import { extname } from 'path';
 import { existsSync, mkdirSync } from 'fs';
 import { diskStorage } from 'multer';
@@ -10,7 +9,7 @@ export const multerOptions = {
         fileSize: 5 * 1024 * 1024, // 5MB
     },
     // Check the mimetypes to allow for upload
-    fileFilter: (req: any, file: any, cb: any) => {
+    fileFilter: (_req: any, file: any, cb: any) => {
         if (file.mimetype.match(/\/(jpg|jpeg|png|gif|pdf)$/)) {
             // Allow storage of file
             cb(null, true);
@@ -22,7 +21,7 @@ export const multerOptions = {
     // Storage properties
     storage: diskStorage({
         // Destination storage path details
-        destination: (req: any, file: any, cb: any) => {
+        destination: (_req: any, _file: any, cb: any) => {
             const uploadPath = './uploads';
             // Create folder if doesn't exist
             if (!existsSync(uploadPath)) {
@@ -31,7 +30,7 @@ export const multerOptions = {
             cb(null, uploadPath);
         },
         // File modification details
-        filename: (req: any, file: any, cb: any) => {
+        filename: (_req: any, file: any, cb: any) => {
             // Calling the callback passing the random name generated with the original extension name
             const randomName = Array(32).fill(null).map(() => (Math.round(Math.random() * 16)).toString(16)).join('');
             cb(null, `${randomName}${extname(file.originalname)}`);

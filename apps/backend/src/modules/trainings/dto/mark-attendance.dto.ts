@@ -4,10 +4,10 @@ import { AttendanceStatus } from '@prisma/client';
 
 export class PlayerAttendanceDto {
     @IsString()
-    playerId: string;
+    playerId!: string;
 
     @IsEnum(AttendanceStatus)
-    status: AttendanceStatus;
+    status!: AttendanceStatus;
 
     @IsOptional()
     @IsString()
@@ -18,5 +18,5 @@ export class MarkAttendanceDto {
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => PlayerAttendanceDto)
-    attendance: PlayerAttendanceDto[];
+    attendance!: PlayerAttendanceDto[];
 }

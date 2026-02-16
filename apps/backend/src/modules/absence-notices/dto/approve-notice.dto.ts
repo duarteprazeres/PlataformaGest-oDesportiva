@@ -1,12 +1,12 @@
-import { IsUUID, IsOptional, IsString, IsBoolean, ValidateNested } from 'class-validator';
+import { IsOptional, IsString, IsBoolean, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class InjuryDataDto {
     @IsString()
-    name: string;
+    name!: string;
 
     @IsString()
-    severity: 'MILD' | 'MODERATE' | 'SEVERE';
+    severity!: 'MILD' | 'MODERATE' | 'SEVERE';
 
     @IsOptional()
     @IsString()

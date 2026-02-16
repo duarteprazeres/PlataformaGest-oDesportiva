@@ -3,15 +3,15 @@ import { IsBoolean, IsDateString, IsNotEmpty, IsOptional, IsString } from 'class
 export class CreateSeasonDto {
     @IsString()
     @IsNotEmpty()
-    name: string;
+    name!: string;
 
     @IsDateString()
     @IsNotEmpty()
-    startDate: string;
+    startDate!: string;
 
     @IsDateString()
     @IsNotEmpty()
-    endDate: string;
+    endDate!: string;
 
     @IsBoolean()
     @IsOptional()

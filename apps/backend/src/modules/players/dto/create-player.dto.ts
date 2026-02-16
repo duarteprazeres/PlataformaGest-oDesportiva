@@ -3,19 +3,19 @@ import { IsString, IsNotEmpty, IsOptional, IsDateString, IsUUID, IsNumber } from
 export class CreatePlayerDto {
     @IsString()
     @IsNotEmpty()
-    firstName: string;
+    firstName!: string;
 
     @IsString()
     @IsNotEmpty()
-    lastName: string;
+    lastName!: string;
 
     @IsDateString()
     @IsNotEmpty()
-    birthDate: string;
+    birthDate!: string;
 
     @IsUUID()
     @IsNotEmpty()
-    parentId: string;
+    parentId!: string;
 
     @IsUUID()
     @IsOptional()

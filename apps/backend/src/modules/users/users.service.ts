@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -11,16 +14,21 @@ export class UsersService {
         });
     }
 
-    async create(data: any) {
+    async create(data: CreateUserDto & { clubId: string }) {
+        let passwordHash = '';
         if (data.password) {
-            const bcrypt = await import('bcrypt');
-            const hash = await bcrypt.hash(data.password, 10);
-            data.passwordHash = hash;
-            delete data.password;
+            passwordHash = await bcrypt.hash(data.password, 10);
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { password, ...userData } = data;
+
         return this.prisma.user.create({
-            data,
+            data: {
+                ...userData,
+                role: userData.role || 'PARENT',
+                passwordHash,
+            },
         });
     }
 
@@ -42,21 +50,22 @@ export class UsersService {
             where: { id },
         });
         if (!user) return null;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { passwordHash, ...result } = user;
         return result;
     }
 
-    async update(id: string, data: any) {
+    async update(id: string, data: UpdateUserDto) {
         const user = await this.prisma.user.update({
             where: { id },
             data,
         });
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { passwordHash, ...result } = user;
         return result;
     }
 
     async changePassword(id: string, newPassword: string) {
-        const bcrypt = await import('bcrypt');
         const passwordHash = await bcrypt.hash(newPassword, 10);
         await this.prisma.user.update({
             where: { id },

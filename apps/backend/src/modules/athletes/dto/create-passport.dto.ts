@@ -1,17 +1,17 @@
-import { IsString, IsNotEmpty, IsDateString, IsOptional, IsEnum } from 'class-validator';
+import { IsString, IsNotEmpty, IsDateString, IsOptional } from 'class-validator';
 
 export class CreatePassportDto {
     @IsString()
     @IsNotEmpty()
-    firstName: string;
+    firstName!: string;
 
     @IsString()
     @IsNotEmpty()
-    lastName: string;
+    lastName!: string;
 
     @IsDateString()
     @IsNotEmpty()
-    birthDate: string;
+    birthDate!: string;
 
     @IsString()
     @IsOptional()

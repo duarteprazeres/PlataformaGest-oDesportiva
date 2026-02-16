@@ -2,7 +2,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TrainingsService } from './trainings.service';
 import { PrismaService } from '../../database/prisma.service';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 
 describe('TrainingsService', () => {
     let service: TrainingsService;

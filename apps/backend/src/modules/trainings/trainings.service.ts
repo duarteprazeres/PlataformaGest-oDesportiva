@@ -139,7 +139,7 @@ export class TrainingsService {
         return training;
     }
     async update(clubId: string, id: string, updateTrainingDto: any, file?: Express.Multer.File) {
-        const training = await this.findOne(clubId, id);
+        await this.findOne(clubId, id);
 
         const data: any = { ...updateTrainingDto };
 

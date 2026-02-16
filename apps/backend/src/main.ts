@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
@@ -10,6 +11,9 @@ async function bootstrap() {
 
     // Global Exception Filter
     app.useGlobalFilters(new HttpExceptionFilter());
+
+    // Security Headers (Helmet)
+    app.use(helmet());
 
     // Global Logging Interceptor
     app.useGlobalInterceptors(new LoggingInterceptor());

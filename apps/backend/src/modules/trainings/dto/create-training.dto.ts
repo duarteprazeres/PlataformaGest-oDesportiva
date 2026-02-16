@@ -3,19 +3,19 @@ import { Transform } from 'class-transformer';
 
 export class CreateTrainingDto {
     @IsUUID()
-    teamId: string;
+    teamId!: string;
 
     @IsDateString()
-    scheduledDate: string; // YYYY-MM-DD
+    scheduledDate!: string; // YYYY-MM-DD
 
     @IsString()
-    startTime: string; // HH:mm
+    startTime!: string; // HH:mm
 
     @IsString()
-    endTime: string; // HH:mm
+    endTime!: string; // HH:mm
 
     @IsString()
-    location: string;
+    location!: string;
 
     @IsString()
     @IsOptional()

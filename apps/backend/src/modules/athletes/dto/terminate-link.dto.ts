@@ -3,7 +3,7 @@ import { IsString, IsNotEmpty, IsOptional, IsUrl, IsEmail, IsBoolean } from 'cla
 export class TerminateLinkDto {
     @IsString()
     @IsNotEmpty()
-    reason: string;
+    reason!: string;
 
     @IsUrl()
     @IsOptional()

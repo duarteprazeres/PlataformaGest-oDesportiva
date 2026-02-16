@@ -76,7 +76,7 @@ export class WithdrawalProcessor {
 
                     this.logger.log(`Successfully processed withdrawal for player ${player.id} (Athlete: ${player.athleteId})`);
                 });
-            } catch (error) {
+            } catch (error: any) {
                 this.logger.error(`Failed to process withdrawal for player ${player.id}: ${error.message}`, error.stack);
             }
         }
