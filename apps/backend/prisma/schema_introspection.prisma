@@ -1,0 +1,652 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model absence_notices {
+  id                     String                @id @db.Uuid
+  athlete_id             String                @db.Uuid
+  player_id              String?               @db.Uuid
+  training_id            String                @db.Uuid
+  submitted_by_parent_id String                @db.Uuid
+  type                   String                @default("ABSENCE") @db.VarChar(20)
+  reason                 String?
+  status                 absence_notice_status @default(PENDING)
+  reviewed_by_user_id    String?               @db.Uuid
+  reviewed_at            DateTime?             @db.Timestamptz(6)
+  review_notes           String?
+  created_at             DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime              @db.Timestamptz(6)
+  athletes               athletes              @relation(fields: [athlete_id], references: [id], onDelete: Cascade)
+  players                players?              @relation(fields: [player_id], references: [id])
+  users                  users?                @relation(fields: [reviewed_by_user_id], references: [id])
+  global_parents         global_parents        @relation(fields: [submitted_by_parent_id], references: [id], onDelete: Cascade)
+  trainings              trainings             @relation(fields: [training_id], references: [id], onDelete: Cascade)
+
+  @@index([athlete_id])
+  @@index([status])
+  @@index([training_id, status])
+}
+
+model athletes {
+  id                 String              @id @db.Uuid
+  public_id          String              @unique @db.VarChar(10)
+  global_parent_id   String              @db.Uuid
+  first_name         String              @db.VarChar(100)
+  last_name          String              @db.VarChar(100)
+  birth_date         DateTime            @db.Date
+  gender             String?             @db.VarChar(10)
+  citizen_card       String?             @db.VarChar(50)
+  tax_id             String?             @db.VarChar(50)
+  medical_conditions String?
+  allergies          String?
+  current_club_id    String?             @db.Uuid
+  created_at         DateTime            @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime            @db.Timestamptz(6)
+  absence_notices    absence_notices[]
+  global_parents     global_parents      @relation(fields: [global_parent_id], references: [id], onDelete: Cascade)
+  players            players[]
+  transfer_requests  transfer_requests[]
+}
+
+model clubs {
+  id                                                      String                @id @db.Uuid
+  name                                                    String                @db.VarChar(255)
+  subdomain                                               String                @unique @db.VarChar(100)
+  logo_url                                                String?
+  email                                                   String                @unique @db.VarChar(255)
+  phone                                                   String?               @db.VarChar(20)
+  address                                                 String?
+  city                                                    String?               @db.VarChar(100)
+  postal_code                                             String?               @db.VarChar(20)
+  country                                                 String                @default("Portugal") @db.VarChar(100)
+  tax_id                                                  String?               @db.VarChar(50)
+  subscription_plan                                       String                @default("FREE") @db.VarChar(50)
+  subscription_status                                     String                @default("ACTIVE") @db.VarChar(50)
+  subscription_started_at                                 DateTime              @default(now()) @db.Timestamptz(6)
+  subscription_ends_at                                    DateTime?             @db.Timestamptz(6)
+  settings                                                Json                  @default("{\"currency\": \"EUR\", \"language\": \"pt\", \"timezone\": \"Europe/Lisbon\", \"notifications_enabled\": true, \"payment_reminders_days\": [7, 3, 1]}")
+  created_at                                              DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at                                              DateTime              @db.Timestamptz(6)
+  deleted_at                                              DateTime?             @db.Timestamptz(6)
+  injuries                                                injuries[]
+  invoices                                                invoices[]
+  match_callups                                           match_callups[]
+  matches                                                 matches[]
+  notifications                                           notifications[]
+  order_items                                             order_items[]
+  orders                                                  orders[]
+  payments                                                payments[]
+  player_team_history                                     player_team_history[]
+  players                                                 players[]
+  seasons                                                 seasons[]
+  stock_items                                             stock_items[]
+  stock_movements                                         stock_movements[]
+  teams                                                   teams[]
+  training_attendance                                     training_attendance[]
+  trainings                                               trainings[]
+  transfer_requests_transfer_requests_from_club_idToclubs transfer_requests[]   @relation("transfer_requests_from_club_idToclubs")
+  transfer_requests_transfer_requests_to_club_idToclubs   transfer_requests[]   @relation("transfer_requests_to_club_idToclubs")
+  users                                                   users[]
+}
+
+model global_parents {
+  id              String            @id @db.Uuid
+  email           String            @unique @db.VarChar(255)
+  password_hash   String            @db.VarChar(255)
+  first_name      String            @db.VarChar(100)
+  last_name       String            @db.VarChar(100)
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime          @db.Timestamptz(6)
+  absence_notices absence_notices[]
+  athletes        athletes[]
+  users           users[]
+}
+
+model injuries {
+  id                 String         @id @db.Uuid
+  club_id            String         @db.Uuid
+  player_id          String         @db.Uuid
+  status             medical_status @default(INJURED)
+  name               String         @db.VarChar(255)
+  description        String?
+  start_date         DateTime       @default(now()) @db.Date
+  end_date           DateTime?      @db.Date
+  created_by_user_id String?        @db.Uuid
+  created_at         DateTime       @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime       @db.Timestamptz(6)
+  clubs              clubs          @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  users              users?         @relation(fields: [created_by_user_id], references: [id])
+  players            players        @relation(fields: [player_id], references: [id], onDelete: Cascade)
+}
+
+model invoices {
+  id                  String    @id @db.Uuid
+  club_id             String    @db.Uuid
+  payment_id          String?   @db.Uuid
+  invoice_number      String    @db.VarChar(50)
+  invoice_series      String    @default("A") @db.VarChar(10)
+  subtotal            Decimal   @db.Decimal(10, 2)
+  tax_rate            Decimal   @default(0) @db.Decimal(5, 2)
+  tax_amount          Decimal   @default(0) @db.Decimal(10, 2)
+  total_amount        Decimal   @db.Decimal(10, 2)
+  billed_to_name      String    @db.VarChar(255)
+  billed_to_tax_id    String?   @db.VarChar(50)
+  billed_to_address   String?
+  items               Json      @default("[]")
+  issue_date          DateTime  @default(now()) @db.Date
+  due_date            DateTime? @db.Date
+  pdf_url             String?
+  pdf_generated_at    DateTime? @db.Timestamptz(6)
+  is_cancelled        Boolean   @default(false)
+  cancelled_at        DateTime? @db.Timestamptz(6)
+  cancellation_reason String?
+  notes               String?
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime  @db.Timestamptz(6)
+  clubs               clubs     @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  payments            payments? @relation(fields: [payment_id], references: [id])
+
+  @@unique([club_id, invoice_series, invoice_number])
+}
+
+model match_callups {
+  id                  String           @id @db.Uuid
+  club_id             String           @db.Uuid
+  match_id            String           @db.Uuid
+  player_id           String           @db.Uuid
+  is_starter          Boolean          @default(false)
+  position            player_position?
+  jersey_number       Int?
+  confirmed_by_parent Boolean          @default(false)
+  confirmed_at        DateTime?        @db.Timestamptz(6)
+  played              Boolean          @default(false)
+  minutes_played      Int              @default(0)
+  goals_scored        Int              @default(0)
+  yellow_cards        Int              @default(0)
+  red_card            Boolean          @default(false)
+  coach_rating        Decimal?         @db.Decimal(3, 1)
+  notes               String?
+  created_by_user_id  String?          @db.Uuid
+  created_at          DateTime         @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime         @db.Timestamptz(6)
+  clubs               clubs            @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  users               users?           @relation(fields: [created_by_user_id], references: [id])
+  matches             matches          @relation(fields: [match_id], references: [id], onDelete: Cascade)
+  players             players          @relation(fields: [player_id], references: [id], onDelete: Cascade)
+
+  @@unique([match_id, player_id])
+}
+
+model matches {
+  id            String          @id @db.Uuid
+  club_id       String          @db.Uuid
+  team_id       String          @db.Uuid
+  opponent_name String          @db.VarChar(255)
+  competition   String?         @db.VarChar(255)
+  match_date    DateTime        @db.Date
+  match_time    DateTime?       @db.Time(6)
+  location      String          @db.VarChar(255)
+  is_home_match Boolean         @default(true)
+  result        match_result    @default(SCHEDULED)
+  goals_for     Int?
+  goals_against Int?
+  statistics    Json            @default("{}")
+  notes         String?
+  created_at    DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime        @db.Timestamptz(6)
+  match_callups match_callups[]
+  clubs         clubs           @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  teams         teams           @relation(fields: [team_id], references: [id], onDelete: Cascade)
+}
+
+model notifications {
+  id                  String    @id @db.Uuid
+  club_id             String    @db.Uuid
+  user_id             String    @db.Uuid
+  type                String    @db.VarChar(100)
+  title               String    @db.VarChar(255)
+  message             String
+  related_entity_type String?   @db.VarChar(100)
+  related_entity_id   String?   @db.Uuid
+  action_url          String?
+  is_read             Boolean   @default(false)
+  read_at             DateTime? @db.Timestamptz(6)
+  sent_via            String[]
+  created_at          DateTime  @default(now()) @db.Timestamptz(6)
+  clubs               clubs     @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  users               users     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+}
+
+model order_items {
+  id              String            @id @db.Uuid
+  club_id         String            @db.Uuid
+  order_id        String            @db.Uuid
+  stock_item_id   String            @db.Uuid
+  product_name    String            @db.VarChar(255)
+  product_sku     String?           @db.VarChar(100)
+  selected_size   String?           @db.VarChar(50)
+  selected_color  String?           @db.VarChar(50)
+  unit_price      Decimal           @db.Decimal(10, 2)
+  quantity        Int
+  subtotal        Decimal           @db.Decimal(10, 2)
+  discount_amount Decimal           @default(0) @db.Decimal(10, 2)
+  total_amount    Decimal           @db.Decimal(10, 2)
+  created_at      DateTime          @default(now()) @db.Timestamptz(6)
+  clubs           clubs             @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  orders          orders            @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  stock_items     stock_items       @relation(fields: [stock_item_id], references: [id])
+  stock_movements stock_movements[]
+}
+
+model orders {
+  id                      String          @id @db.Uuid
+  club_id                 String          @db.Uuid
+  customer_id             String          @db.Uuid
+  order_number            String          @db.VarChar(50)
+  status                  order_status    @default(CART)
+  subtotal                Decimal         @db.Decimal(10, 2)
+  shipping_cost           Decimal         @default(0) @db.Decimal(10, 2)
+  tax_amount              Decimal         @default(0) @db.Decimal(10, 2)
+  discount_amount         Decimal         @default(0) @db.Decimal(10, 2)
+  total_amount            Decimal         @db.Decimal(10, 2)
+  currency                String          @default("EUR") @db.VarChar(3)
+  shipping_address        String?
+  shipping_city           String?         @db.VarChar(100)
+  shipping_postal_code    String?         @db.VarChar(20)
+  shipping_country        String          @default("Portugal") @db.VarChar(100)
+  estimated_delivery_date DateTime?       @db.Date
+  delivered_at            DateTime?       @db.Timestamptz(6)
+  tracking_number         String?         @db.VarChar(255)
+  payment_id              String?         @db.Uuid
+  payment_method          payment_method?
+  customer_notes          String?
+  internal_notes          String?
+  placed_at               DateTime?       @db.Timestamptz(6)
+  paid_at                 DateTime?       @db.Timestamptz(6)
+  shipped_at              DateTime?       @db.Timestamptz(6)
+  cancelled_at            DateTime?       @db.Timestamptz(6)
+  created_at              DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime        @db.Timestamptz(6)
+  order_items             order_items[]
+  clubs                   clubs           @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  users                   users           @relation(fields: [customer_id], references: [id])
+  payments                payments?       @relation(fields: [payment_id], references: [id])
+
+  @@unique([club_id, order_number])
+}
+
+model payments {
+  id                                         String          @id @db.Uuid
+  club_id                                    String          @db.Uuid
+  player_id                                  String          @db.Uuid
+  payer_id                                   String          @db.Uuid
+  payment_type                               payment_type
+  amount                                     Decimal         @db.Decimal(10, 2)
+  currency                                   String          @default("EUR") @db.VarChar(3)
+  status                                     payment_status  @default(PENDING)
+  payment_method                             payment_method?
+  reference_code                             String?         @db.VarChar(100)
+  transaction_id                             String?         @db.VarChar(255)
+  due_date                                   DateTime        @db.Date
+  paid_at                                    DateTime?       @db.Timestamptz(6)
+  period_start                               DateTime?       @db.Date
+  period_end                                 DateTime?       @db.Date
+  description                                String?
+  notes                                      String?
+  reminder_sent_count                        Int             @default(0)
+  last_reminder_sent_at                      DateTime?       @db.Timestamptz(6)
+  processed_by_user_id                       String?         @db.Uuid
+  created_at                                 DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at                                 DateTime        @db.Timestamptz(6)
+  deleted_at                                 DateTime?       @db.Timestamptz(6)
+  invoices                                   invoices[]
+  orders                                     orders[]
+  clubs                                      clubs           @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  users_payments_payer_idTousers             users           @relation("payments_payer_idTousers", fields: [payer_id], references: [id])
+  players                                    players         @relation(fields: [player_id], references: [id], onDelete: Cascade)
+  users_payments_processed_by_user_idTousers users?          @relation("payments_processed_by_user_idTousers", fields: [processed_by_user_id], references: [id])
+}
+
+model player_team_history {
+  id             String    @id @db.Uuid
+  club_id        String    @db.Uuid
+  player_id      String    @db.Uuid
+  team_id        String    @db.Uuid
+  joined_at      DateTime  @default(now()) @db.Date
+  left_at        DateTime? @db.Date
+  matches_played Int       @default(0)
+  goals_scored   Int       @default(0)
+  created_at     DateTime  @default(now()) @db.Timestamptz(6)
+  clubs          clubs     @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  players        players   @relation(fields: [player_id], references: [id], onDelete: Cascade)
+  teams          teams     @relation(fields: [team_id], references: [id], onDelete: Cascade)
+}
+
+model players {
+  id                             String                @id @db.Uuid
+  club_id                        String                @db.Uuid
+  first_name                     String                @db.VarChar(100)
+  last_name                      String                @db.VarChar(100)
+  birth_date                     DateTime              @db.Date
+  gender                         String?               @db.VarChar(10)
+  photo_url                      String?
+  parent_id                      String                @db.Uuid
+  current_team_id                String?               @db.Uuid
+  jersey_number                  Int?
+  preferred_position             player_position?
+  height_cm                      Int?
+  weight_kg                      Decimal?              @db.Decimal(5, 2)
+  emergency_contact_name         String?               @db.VarChar(255)
+  emergency_contact_phone        String?               @db.VarChar(20)
+  blood_type                     String?               @db.VarChar(5)
+  allergies                      String?
+  medical_conditions             String?
+  medical_certificate_url        String?
+  medical_certificate_expires_at DateTime?             @db.Date
+  citizen_card_number            String?               @db.VarChar(50)
+  tax_id                         String?               @db.VarChar(50)
+  is_active                      Boolean               @default(true)
+  registration_date              DateTime              @default(now()) @db.Date
+  created_at                     DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at                     DateTime              @db.Timestamptz(6)
+  deleted_at                     DateTime?             @db.Timestamptz(6)
+  athlete_id                     String?               @db.Uuid
+  status                         player_status         @default(ACTIVE)
+  withdrawal_requested_at        DateTime?             @db.Timestamptz(6)
+  medical_status                 medical_status        @default(FIT)
+  absence_notices                absence_notices[]
+  injuries                       injuries[]
+  match_callups                  match_callups[]
+  payments                       payments[]
+  player_team_history            player_team_history[]
+  athletes                       athletes?             @relation(fields: [athlete_id], references: [id])
+  clubs                          clubs                 @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  teams                          teams?                @relation(fields: [current_team_id], references: [id])
+  users                          users                 @relation(fields: [parent_id], references: [id])
+  training_attendance            training_attendance[]
+}
+
+model seasons {
+  id         String   @id @db.Uuid
+  club_id    String   @db.Uuid
+  name       String   @db.VarChar(100)
+  start_date DateTime @db.Date
+  end_date   DateTime @db.Date
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  updated_at DateTime @db.Timestamptz(6)
+  clubs      clubs    @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  teams      teams[]
+
+  @@unique([club_id, name])
+}
+
+model stock_items {
+  id                  String            @id @db.Uuid
+  club_id             String            @db.Uuid
+  name                String            @db.VarChar(255)
+  description         String?
+  sku                 String?           @db.VarChar(100)
+  category            String?           @db.VarChar(100)
+  price               Decimal           @db.Decimal(10, 2)
+  cost_price          Decimal?          @db.Decimal(10, 2)
+  currency            String            @default("EUR") @db.VarChar(3)
+  stock_quantity      Int               @default(0)
+  low_stock_threshold Int               @default(5)
+  sizes_available     String[]
+  colors_available    String[]
+  image_url           String?
+  additional_images   String[]
+  is_active           Boolean           @default(true)
+  is_featured         Boolean           @default(false)
+  display_order       Int               @default(0)
+  created_at          DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime          @db.Timestamptz(6)
+  deleted_at          DateTime?         @db.Timestamptz(6)
+  order_items         order_items[]
+  clubs               clubs             @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  stock_movements     stock_movements[]
+}
+
+model stock_movements {
+  id                 String       @id @db.Uuid
+  club_id            String       @db.Uuid
+  stock_item_id      String       @db.Uuid
+  movementType       String       @db.VarChar(50)
+  quantity           Int
+  order_item_id      String?      @db.Uuid
+  quantity_before    Int
+  quantity_after     Int
+  reason             String?
+  created_by_user_id String?      @db.Uuid
+  created_at         DateTime     @default(now()) @db.Timestamptz(6)
+  clubs              clubs        @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  users              users?       @relation(fields: [created_by_user_id], references: [id])
+  order_items        order_items? @relation(fields: [order_item_id], references: [id])
+  stock_items        stock_items  @relation(fields: [stock_item_id], references: [id], onDelete: Cascade)
+}
+
+model teams {
+  id                                    String                @id @db.Uuid
+  club_id                               String                @db.Uuid
+  name                                  String                @db.VarChar(255)
+  category                              String?               @db.VarChar(100)
+  gender                                String?               @db.VarChar(10)
+  season_id                             String                @db.Uuid
+  head_coach_id                         String?               @db.Uuid
+  assistant_coach_id                    String?               @db.Uuid
+  description                           String?
+  team_photo_url                        String?
+  created_at                            DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at                            DateTime              @db.Timestamptz(6)
+  deleted_at                            DateTime?             @db.Timestamptz(6)
+  matches                               matches[]
+  player_team_history                   player_team_history[]
+  players                               players[]
+  users_teams_assistant_coach_idTousers users?                @relation("teams_assistant_coach_idTousers", fields: [assistant_coach_id], references: [id])
+  clubs                                 clubs                 @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  users_teams_head_coach_idTousers      users?                @relation("teams_head_coach_idTousers", fields: [head_coach_id], references: [id])
+  seasons                               seasons               @relation(fields: [season_id], references: [id])
+  trainings                             trainings[]
+
+  @@unique([club_id, name, season_id])
+}
+
+model training_attendance {
+  id                String            @id @db.Uuid
+  club_id           String            @db.Uuid
+  training_id       String            @db.Uuid
+  player_id         String            @db.Uuid
+  status            attendance_status @default(PRESENT)
+  arrived_at        DateTime?         @db.Time(6)
+  justification     String?
+  notes             String?
+  marked_by_user_id String?           @db.Uuid
+  marked_at         DateTime?         @db.Timestamptz(6)
+  created_at        DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime          @db.Timestamptz(6)
+  clubs             clubs             @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  users             users?            @relation(fields: [marked_by_user_id], references: [id])
+  players           players           @relation(fields: [player_id], references: [id], onDelete: Cascade)
+  trainings         trainings         @relation(fields: [training_id], references: [id], onDelete: Cascade)
+
+  @@unique([training_id, player_id])
+}
+
+model trainings {
+  id                                          String                @id @db.Uuid
+  club_id                                     String                @db.Uuid
+  team_id                                     String                @db.Uuid
+  coach_id                                    String                @db.Uuid
+  scheduled_date                              DateTime              @db.Date
+  start_time                                  DateTime              @db.Time(6)
+  end_time                                    DateTime              @db.Time(6)
+  location                                    String                @db.VarChar(255)
+  field_type                                  String?               @db.VarChar(50)
+  title                                       String?               @db.VarChar(255)
+  objectives                                  String?
+  exercises                                   Json                  @default("[]")
+  notes                                       String?
+  plan_file_url                               String?
+  is_cancelled                                Boolean               @default(false)
+  cancellation_reason                         String?
+  created_at                                  DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at                                  DateTime              @db.Timestamptz(6)
+  is_finalized                                Boolean               @default(false)
+  finalized_at                                DateTime?             @db.Timestamptz(6)
+  finalized_by_user_id                        String?               @db.Uuid
+  absence_notices                             absence_notices[]
+  training_attendance                         training_attendance[]
+  clubs                                       clubs                 @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  users_trainings_coach_idTousers             users                 @relation("trainings_coach_idTousers", fields: [coach_id], references: [id])
+  users_trainings_finalized_by_user_idTousers users?                @relation("trainings_finalized_by_user_idTousers", fields: [finalized_by_user_id], references: [id])
+  teams                                       teams                 @relation(fields: [team_id], references: [id], onDelete: Cascade)
+}
+
+model transfer_requests {
+  id                                          String          @id @db.Uuid
+  athlete_id                                  String          @db.Uuid
+  from_club_id                                String?         @db.Uuid
+  to_club_id                                  String          @db.Uuid
+  status                                      transfer_status @default(PENDING)
+  requested_at                                DateTime        @default(now()) @db.Timestamptz(6)
+  updated_at                                  DateTime        @db.Timestamptz(6)
+  expires_at                                  DateTime        @db.Timestamptz(6)
+  athletes                                    athletes        @relation(fields: [athlete_id], references: [id], onDelete: Cascade)
+  clubs_transfer_requests_from_club_idToclubs clubs?          @relation("transfer_requests_from_club_idToclubs", fields: [from_club_id], references: [id])
+  clubs_transfer_requests_to_club_idToclubs   clubs           @relation("transfer_requests_to_club_idToclubs", fields: [to_club_id], references: [id])
+}
+
+model users {
+  id                                              String                @id @db.Uuid
+  club_id                                         String                @db.Uuid
+  email                                           String                @db.VarChar(255)
+  password_hash                                   String                @db.VarChar(255)
+  role                                            user_role
+  first_name                                      String                @db.VarChar(100)
+  last_name                                       String                @db.VarChar(100)
+  phone                                           String?               @db.VarChar(20)
+  avatar_url                                      String?
+  birth_date                                      DateTime?             @db.Date
+  email_verified                                  Boolean               @default(false)
+  email_verified_at                               DateTime?             @db.Timestamptz(6)
+  last_login_at                                   DateTime?             @db.Timestamptz(6)
+  is_active                                       Boolean               @default(true)
+  reset_password_token                            String?               @db.VarChar(255)
+  reset_password_expires_at                       DateTime?             @db.Timestamptz(6)
+  created_at                                      DateTime              @default(now()) @db.Timestamptz(6)
+  updated_at                                      DateTime              @db.Timestamptz(6)
+  deleted_at                                      DateTime?             @db.Timestamptz(6)
+  global_parent_id                                String?               @db.Uuid
+  absence_notices                                 absence_notices[]
+  injuries                                        injuries[]
+  match_callups                                   match_callups[]
+  notifications                                   notifications[]
+  orders                                          orders[]
+  payments_payments_payer_idTousers               payments[]            @relation("payments_payer_idTousers")
+  payments_payments_processed_by_user_idTousers   payments[]            @relation("payments_processed_by_user_idTousers")
+  players                                         players[]
+  stock_movements                                 stock_movements[]
+  teams_teams_assistant_coach_idTousers           teams[]               @relation("teams_assistant_coach_idTousers")
+  teams_teams_head_coach_idTousers                teams[]               @relation("teams_head_coach_idTousers")
+  training_attendance                             training_attendance[]
+  trainings_trainings_coach_idTousers             trainings[]           @relation("trainings_coach_idTousers")
+  trainings_trainings_finalized_by_user_idTousers trainings[]           @relation("trainings_finalized_by_user_idTousers")
+  clubs                                           clubs                 @relation(fields: [club_id], references: [id], onDelete: Cascade)
+  global_parents                                  global_parents?       @relation(fields: [global_parent_id], references: [id])
+
+  @@unique([club_id, email])
+}
+
+enum absence_notice_status {
+  PENDING
+  APPROVED
+  DISMISSED
+}
+
+enum attendance_status {
+  PENDING
+  PRESENT
+  ABSENT
+  LATE
+  JUSTIFIED
+  INJURED
+}
+
+enum match_result {
+  WIN
+  DRAW
+  LOSS
+  SCHEDULED
+}
+
+enum medical_status {
+  FIT
+  INJURED
+  SICK
+  CONDITIONED
+}
+
+enum order_status {
+  CART
+  PENDING
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum payment_method {
+  MBWAY
+  MULTIBANCO
+  CREDIT_CARD
+  CASH
+  BANK_TRANSFER
+}
+
+enum payment_status {
+  PENDING
+  PAID
+  OVERDUE
+  CANCELLED
+  REFUNDED
+}
+
+enum payment_type {
+  MONTHLY_FEE
+  REGISTRATION
+  TOURNAMENT
+  EQUIPMENT
+  OTHER
+}
+
+enum player_position {
+  GOALKEEPER
+  DEFENDER
+  MIDFIELDER
+  FORWARD
+}
+
+enum player_status {
+  ACTIVE
+  PENDING_WITHDRAWAL
+  LEFT
+  SUSPENDED
+}
+
+enum transfer_status {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+enum user_role {
+  SUPER_ADMIN
+  CLUB_ADMIN
+  COACH
+  PARENT
+}

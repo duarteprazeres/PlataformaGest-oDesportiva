@@ -71,6 +71,7 @@ CREATE TYPE player_position AS ENUM (
 
 -- Training attendance status
 CREATE TYPE attendance_status AS ENUM (
+    'PENDING',          -- Not yet marked
     'PRESENT',
     'ABSENT',
     'LATE',
@@ -174,7 +175,8 @@ CREATE INDEX idx_users_email ON users(email) WHERE deleted_at IS NULL;
 CREATE INDEX idx_users_role ON users(club_id, role);
 
 COMMENT ON TABLE users IS 'System users with multi-tenant isolation via club_id';
-COMMENT ON COLUMN users.club_id IS 'FK to clubs - ensures user belongs to a specific club';
+COMMENT ON COLUMN users.club_id IS 'Foreign Key to clubs(id): Ensures user belongs to a specific club/tenant';
+
 
 -- ============================================================================
 -- SPORTS MANAGEMENT TABLES
@@ -213,8 +215,9 @@ CREATE INDEX idx_teams_season ON teams(club_id, season);
 CREATE INDEX idx_teams_head_coach ON teams(head_coach_id);
 
 COMMENT ON TABLE teams IS 'Football teams/squads within a club';
-COMMENT ON COLUMN teams.head_coach_id IS 'FK to users(id) - Main coach responsible for team';
-COMMENT ON COLUMN teams.assistant_coach_id IS 'FK to users(id) - Assistant coach';
+COMMENT ON COLUMN teams.club_id IS 'Foreign Key to clubs(id): Identifies the club this team belongs to';
+COMMENT ON COLUMN teams.head_coach_id IS 'Foreign Key to users(id): Main coach responsible for team';
+COMMENT ON COLUMN teams.assistant_coach_id IS 'Foreign Key to users(id): Assistant coach';
 
 
 -- Players/Athletes
@@ -272,8 +275,9 @@ CREATE INDEX idx_players_current_team ON players(current_team_id);
 CREATE INDEX idx_players_active ON players(club_id, is_active);
 
 COMMENT ON TABLE players IS 'Athletes/Players registered in the club';
-COMMENT ON COLUMN players.parent_id IS 'FK to users(id) - Parent/Guardian responsible for player';
-COMMENT ON COLUMN players.current_team_id IS 'FK to teams(id) - Current team assignment';
+COMMENT ON COLUMN players.club_id IS 'Foreign Key to clubs(id): Identifies the club this player belongs to';
+COMMENT ON COLUMN players.parent_id IS 'Foreign Key to users(id): Parent/Guardian responsible for player';
+COMMENT ON COLUMN players.current_team_id IS 'Foreign Key to teams(id): Current team assignment';
 
 
 -- Player Team History (many-to-many with history)
@@ -299,8 +303,9 @@ CREATE INDEX idx_player_team_history_player ON player_team_history(player_id);
 CREATE INDEX idx_player_team_history_team ON player_team_history(team_id);
 
 COMMENT ON TABLE player_team_history IS 'Historical record of player team assignments';
-COMMENT ON COLUMN player_team_history.player_id IS 'FK to players(id)';
-COMMENT ON COLUMN player_team_history.team_id IS 'FK to teams(id)';
+COMMENT ON COLUMN player_team_history.club_id IS 'Foreign Key to clubs(id): Multi-tenancy isolation';
+COMMENT ON COLUMN player_team_history.player_id IS 'Foreign Key to players(id): The player';
+COMMENT ON COLUMN player_team_history.team_id IS 'Foreign Key to teams(id): The team';
 
 
 -- Training Sessions
@@ -344,8 +349,9 @@ CREATE INDEX idx_trainings_date ON trainings(team_id, scheduled_date);
 CREATE INDEX idx_trainings_coach ON trainings(coach_id);
 
 COMMENT ON TABLE trainings IS 'Scheduled training sessions';
-COMMENT ON COLUMN trainings.team_id IS 'FK to teams(id) - Team this training is for';
-COMMENT ON COLUMN trainings.coach_id IS 'FK to users(id) - Coach conducting the training';
+COMMENT ON COLUMN trainings.club_id IS 'Foreign Key to clubs(id): Multi-tenancy isolation';
+COMMENT ON COLUMN trainings.team_id IS 'Foreign Key to teams(id): Team this training is for';
+COMMENT ON COLUMN trainings.coach_id IS 'Foreign Key to users(id): Coach conducting the training';
 COMMENT ON COLUMN trainings.exercises IS 'JSONB array of training exercises with details';
 
 
@@ -379,9 +385,10 @@ CREATE INDEX idx_training_attendance_player ON training_attendance(player_id);
 CREATE INDEX idx_training_attendance_status ON training_attendance(club_id, status);
 
 COMMENT ON TABLE training_attendance IS 'Player attendance tracking for trainings';
-COMMENT ON COLUMN training_attendance.training_id IS 'FK to trainings(id)';
-COMMENT ON COLUMN training_attendance.player_id IS 'FK to players(id)';
-COMMENT ON COLUMN training_attendance.marked_by_user_id IS 'FK to users(id) - Who recorded attendance';
+COMMENT ON COLUMN training_attendance.club_id IS 'Foreign Key to clubs(id): Multi-tenancy isolation';
+COMMENT ON COLUMN training_attendance.training_id IS 'Foreign Key to trainings(id)';
+COMMENT ON COLUMN training_attendance.player_id IS 'Foreign Key to players(id)';
+COMMENT ON COLUMN training_attendance.marked_by_user_id IS 'Foreign Key to users(id): Who recorded attendance';
 
 
 -- Matches/Games
@@ -421,7 +428,8 @@ CREATE INDEX idx_matches_team_id ON matches(team_id);
 CREATE INDEX idx_matches_date ON matches(team_id, match_date DESC);
 
 COMMENT ON TABLE matches IS 'Football matches/games';
-COMMENT ON COLUMN matches.team_id IS 'FK to teams(id) - Team playing the match';
+COMMENT ON COLUMN matches.club_id IS 'Foreign Key to clubs(id): Multi-tenancy isolation';
+COMMENT ON COLUMN matches.team_id IS 'Foreign Key to teams(id): Team playing the match';
 
 
 -- Match Call-ups (Convocatórias)
@@ -460,9 +468,10 @@ CREATE INDEX idx_match_callups_match ON match_callups(match_id);
 CREATE INDEX idx_match_callups_player ON match_callups(player_id);
 
 COMMENT ON TABLE match_callups IS 'Players called up for matches (convocatórias)';
-COMMENT ON COLUMN match_callups.match_id IS 'FK to matches(id)';
-COMMENT ON COLUMN match_callups.player_id IS 'FK to players(id)';
-COMMENT ON COLUMN match_callups.created_by_user_id IS 'FK to users(id) - Coach who created the callup';
+COMMENT ON COLUMN match_callups.club_id IS 'Foreign Key to clubs(id): Multi-tenancy isolation';
+COMMENT ON COLUMN match_callups.match_id IS 'Foreign Key to matches(id)';
+COMMENT ON COLUMN match_callups.player_id IS 'Foreign Key to players(id)';
+COMMENT ON COLUMN match_callups.created_by_user_id IS 'Foreign Key to users(id): Coach who created the callup';
 
 
 -- ============================================================================
@@ -525,9 +534,10 @@ CREATE INDEX idx_payments_overdue ON payments(club_id, due_date)
     WHERE status = 'OVERDUE' AND deleted_at IS NULL;
 
 COMMENT ON TABLE payments IS 'Payment records for fees, registrations, etc.';
-COMMENT ON COLUMN payments.player_id IS 'FK to players(id) - Player this payment is for';
-COMMENT ON COLUMN payments.payer_id IS 'FK to users(id) - Parent/Guardian making the payment';
-COMMENT ON COLUMN payments.processed_by_user_id IS 'FK to users(id) - Admin who confirmed payment';
+COMMENT ON COLUMN payments.club_id IS 'Foreign Key to clubs(id): Multi-tenancy isolation';
+COMMENT ON COLUMN payments.player_id IS 'Foreign Key to players(id): Player this payment is for';
+COMMENT ON COLUMN payments.payer_id IS 'Foreign Key to users(id): Parent/Guardian making the payment';
+COMMENT ON COLUMN payments.processed_by_user_id IS 'Foreign Key to users(id): Admin who confirmed payment';
 COMMENT ON COLUMN payments.reference_code IS 'Payment reference (Multibanco, MB Way, etc.)';
 
 
@@ -584,7 +594,8 @@ CREATE INDEX idx_invoices_number ON invoices(club_id, invoice_number);
 CREATE INDEX idx_invoices_issue_date ON invoices(club_id, issue_date DESC);
 
 COMMENT ON TABLE invoices IS 'Legal invoices/receipts for payments';
-COMMENT ON COLUMN invoices.payment_id IS 'FK to payments(id) - Related payment record';
+COMMENT ON COLUMN invoices.club_id IS 'Foreign Key to clubs(id): Multi-tenancy isolation';
+COMMENT ON COLUMN invoices.payment_id IS 'Foreign Key to payments(id): Related payment record';
 COMMENT ON COLUMN invoices.items IS 'JSONB array of invoice line items';
 
 
@@ -637,6 +648,7 @@ CREATE INDEX idx_stock_items_low_stock ON stock_items(club_id)
     WHERE stock_quantity <= low_stock_threshold AND is_active = TRUE;
 
 COMMENT ON TABLE stock_items IS 'Products available in club store';
+COMMENT ON COLUMN stock_items.club_id IS 'Foreign Key to clubs(id): Multi-tenancy isolation';
 COMMENT ON COLUMN stock_items.low_stock_threshold IS 'Alert when stock falls below this level';
 
 
@@ -700,8 +712,9 @@ CREATE INDEX idx_orders_created_at ON orders(club_id, created_at DESC);
 CREATE INDEX idx_orders_number ON orders(club_id, order_number);
 
 COMMENT ON TABLE orders IS 'Customer orders from club store';
-COMMENT ON COLUMN orders.customer_id IS 'FK to users(id) - Parent who placed the order';
-COMMENT ON COLUMN orders.payment_id IS 'FK to payments(id) - Payment for this order';
+COMMENT ON COLUMN orders.club_id IS 'Foreign Key to clubs(id): Multi-tenancy isolation';
+COMMENT ON COLUMN orders.customer_id IS 'Foreign Key to users(id): Parent who placed the order';
+COMMENT ON COLUMN orders.payment_id IS 'Foreign Key to payments(id): Payment for this order';
 
 
 -- Order Items (Products in each order)
@@ -736,8 +749,9 @@ CREATE INDEX idx_order_items_order_id ON order_items(order_id);
 CREATE INDEX idx_order_items_stock_item_id ON order_items(stock_item_id);
 
 COMMENT ON TABLE order_items IS 'Line items for each order';
-COMMENT ON COLUMN order_items.order_id IS 'FK to orders(id)';
-COMMENT ON COLUMN order_items.stock_item_id IS 'FK to stock_items(id)';
+COMMENT ON COLUMN order_items.club_id IS 'Foreign Key to clubs(id): Multi-tenancy isolation';
+COMMENT ON COLUMN order_items.order_id IS 'Foreign Key to orders(id): Order this item belongs to';
+COMMENT ON COLUMN order_items.stock_item_id IS 'Foreign Key to stock_items(id): Product reference';
 COMMENT ON COLUMN order_items.product_name IS 'Snapshot of product name at time of order';
 
 
@@ -772,9 +786,10 @@ CREATE INDEX idx_stock_movements_order_item ON stock_movements(order_item_id);
 CREATE INDEX idx_stock_movements_created_at ON stock_movements(club_id, created_at DESC);
 
 COMMENT ON TABLE stock_movements IS 'Audit trail for all stock quantity changes';
-COMMENT ON COLUMN stock_movements.stock_item_id IS 'FK to stock_items(id)';
-COMMENT ON COLUMN stock_movements.order_item_id IS 'FK to order_items(id) if movement from sale';
-COMMENT ON COLUMN stock_movements.created_by_user_id IS 'FK to users(id) - Who made the change';
+COMMENT ON COLUMN stock_movements.club_id IS 'Foreign Key to clubs(id): Multi-tenancy isolation';
+COMMENT ON COLUMN stock_movements.stock_item_id IS 'Foreign Key to stock_items(id): Product being moved';
+COMMENT ON COLUMN stock_movements.order_item_id IS 'Foreign Key to order_items(id): If movement from sale';
+COMMENT ON COLUMN stock_movements.created_by_user_id IS 'Foreign Key to users(id): Who made the change';
 
 
 -- ============================================================================
@@ -816,7 +831,8 @@ CREATE INDEX idx_notifications_club_id ON notifications(club_id);
 CREATE INDEX idx_notifications_created_at ON notifications(user_id, created_at DESC);
 
 COMMENT ON TABLE notifications IS 'User notifications (push, email, in-app)';
-COMMENT ON COLUMN notifications.user_id IS 'FK to users(id) - Notification recipient';
+COMMENT ON COLUMN notifications.club_id IS 'Foreign Key to clubs(id): Multi-tenancy isolation';
+COMMENT ON COLUMN notifications.user_id IS 'Foreign Key to users(id): Notification recipient';
 
 
 -- ============================================================================
@@ -882,7 +898,6 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- This should be called by a scheduled job (e.g., cron job or NestJS scheduler)
 COMMENT ON FUNCTION check_overdue_payments IS 'Automatically mark pending payments as overdue - run daily via cron';
 
 
@@ -947,6 +962,86 @@ $$ LANGUAGE plpgsql;
 
 COMMENT ON FUNCTION generate_order_number IS 'Generate sequential order number: YYYYMMDD-NNNN';
 
+
+-- ============================================================================
+-- CONSISTENCY TRIGGERS (Multi-tenant Protection)
+-- ============================================================================
+
+-- Function to check that linked entities belong to the same club
+-- 1. Player Consistency
+CREATE OR REPLACE FUNCTION check_player_consistency()
+RETURNS TRIGGER AS $$
+DECLARE
+    t_club_id UUID;
+    p_club_id UUID;
+BEGIN
+    -- Check Player -> Team
+    IF NEW.current_team_id IS NOT NULL THEN
+        SELECT club_id INTO t_club_id FROM teams WHERE id = NEW.current_team_id;
+        IF t_club_id != NEW.club_id THEN
+            RAISE EXCEPTION 'Consistency Error: Player club_id (%) matches team club_id (%)\', NEW.club_id, t_club_id;
+        END IF;
+    END IF;
+
+    -- Check Player -> Parent (User)
+    IF NEW.parent_id IS NOT NULL THEN
+        SELECT club_id INTO p_club_id FROM users WHERE id = NEW.parent_id;
+        IF p_club_id != NEW.club_id THEN
+             RAISE EXCEPTION 'Consistency Error: Player club_id (%) does not match Parent club_id (%)\', NEW.club_id, p_club_id;
+        END IF;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 2. Team Consistency
+CREATE OR REPLACE FUNCTION check_team_consistency()
+RETURNS TRIGGER AS $$
+DECLARE
+    p_club_id UUID;
+BEGIN
+    -- Check Team -> Coach
+    IF NEW.head_coach_id IS NOT NULL THEN
+        SELECT club_id INTO p_club_id FROM users WHERE id = NEW.head_coach_id;
+        IF p_club_id != NEW.club_id THEN
+             RAISE EXCEPTION 'Consistency Error: Team club_id (%) does not match Coach club_id (%)\', NEW.club_id, p_club_id;
+        END IF;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 3. Training Consistency
+CREATE OR REPLACE FUNCTION check_training_consistency()
+RETURNS TRIGGER AS $$
+DECLARE
+    t_club_id UUID;
+BEGIN
+    -- Check Training -> Team
+    IF NEW.team_id IS NOT NULL THEN
+        SELECT club_id INTO t_club_id FROM teams WHERE id = NEW.team_id;
+        IF t_club_id != NEW.club_id THEN
+             RAISE EXCEPTION 'Consistency Error: Training club_id (%) does not match Team club_id (%)\', NEW.club_id, t_club_id;
+        END IF;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER check_consistency_players
+BEFORE INSERT OR UPDATE ON players
+FOR EACH ROW EXECUTE FUNCTION check_player_consistency();
+
+CREATE TRIGGER check_consistency_teams
+BEFORE INSERT OR UPDATE ON teams
+FOR EACH ROW EXECUTE FUNCTION check_team_consistency();
+
+CREATE TRIGGER check_consistency_trainings
+BEFORE INSERT OR UPDATE ON trainings
+FOR EACH ROW EXECUTE FUNCTION check_training_consistency();
 
 -- ============================================================================
 -- VIEWS FOR COMMON QUERIES

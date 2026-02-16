@@ -19,6 +19,8 @@ enum UserRole {
   CLUB_ADMIN
   COACH
   PARENT
+
+  @@map("user_role")
 }
 
 enum PaymentStatus {
@@ -27,6 +29,8 @@ enum PaymentStatus {
   OVERDUE
   CANCELLED
   REFUNDED
+
+  @@map("payment_status")
 }
 
 enum PaymentType {
@@ -35,6 +39,8 @@ enum PaymentType {
   TOURNAMENT
   EQUIPMENT
   OTHER
+
+  @@map("payment_type")
 }
 
 enum PaymentMethod {
@@ -43,6 +49,8 @@ enum PaymentMethod {
   CREDIT_CARD
   CASH
   BANK_TRANSFER
+
+  @@map("payment_method")
 }
 
 enum OrderStatus {
@@ -54,6 +62,8 @@ enum OrderStatus {
   DELIVERED
   CANCELLED
   REFUNDED
+
+  @@map("order_status")
 }
 
 enum PlayerPosition {
@@ -61,14 +71,19 @@ enum PlayerPosition {
   DEFENDER
   MIDFIELDER
   FORWARD
+
+  @@map("player_position")
 }
 
 enum AttendanceStatus {
+  PENDING
   PRESENT
   ABSENT
   LATE
   JUSTIFIED
   INJURED
+
+  @@map("attendance_status")
 }
 
 enum MatchResult {
@@ -76,6 +91,16 @@ enum MatchResult {
   DRAW
   LOSS
   SCHEDULED
+
+  @@map("match_result")
+}
+
+enum AbsenceNoticeStatus {
+  PENDING
+  APPROVED
+  DISMISSED
+
+  @@map("absence_notice_status")
 }
 
 // ============================================================================
@@ -83,103 +108,114 @@ enum MatchResult {
 // ============================================================================
 
 model Club {
-  id                    String    @id @default(uuid()) @db.Uuid
-  name                  String    @db.VarChar(255)
-  subdomain             String    @unique @db.VarChar(100)
-  logoUrl               String?   @map("logo_url") @db.Text
-  email                 String    @unique @db.VarChar(255)
-  phone                 String?   @db.VarChar(20)
-  address               String?   @db.Text
-  city                  String?   @db.VarChar(100)
-  postalCode            String?   @map("postal_code") @db.VarChar(20)
-  country               String    @default("Portugal") @db.VarChar(100)
-  taxId                 String?   @map("tax_id") @db.VarChar(50)
-  
+  id         String  @id @default(uuid()) @db.Uuid
+  name       String  @db.VarChar(255)
+  subdomain  String  @unique @db.VarChar(100)
+  logoUrl    String? @map("logo_url") @db.Text
+  email      String  @unique @db.VarChar(255)
+  phone      String? @db.VarChar(20)
+  address    String? @db.Text
+  city       String? @db.VarChar(100)
+  postalCode String? @map("postal_code") @db.VarChar(20)
+  country    String  @default("Portugal") @db.VarChar(100)
+  taxId      String? @map("tax_id") @db.VarChar(50)
+
   // Subscription
   subscriptionPlan      String    @default("FREE") @map("subscription_plan") @db.VarChar(50)
   subscriptionStatus    String    @default("ACTIVE") @map("subscription_status") @db.VarChar(50)
   subscriptionStartedAt DateTime  @default(now()) @map("subscription_started_at") @db.Timestamptz(6)
   subscriptionEndsAt    DateTime? @map("subscription_ends_at") @db.Timestamptz(6)
-  
+
   // Settings (JSONB)
-  settings              Json      @default("{\"currency\":\"EUR\",\"timezone\":\"Europe/Lisbon\",\"language\":\"pt\",\"notifications_enabled\":true,\"payment_reminders_days\":[7,3,1]}")
-  
+  settings Json @default("{\"currency\":\"EUR\",\"timezone\":\"Europe/Lisbon\",\"language\":\"pt\",\"notifications_enabled\":true,\"payment_reminders_days\":[7,3,1]}")
+
   // Audit
-  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt             DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt             DateTime? @map("deleted_at") @db.Timestamptz(6)
-  
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+
   // Relations
-  users                 User[]
-  teams                 Team[]
-  players               Player[]
-  trainings             Training[]
-  matches               Match[]
-  payments              Payment[]
-  invoices              Invoice[]
-  stockItems            StockItem[]
-  orders                Order[]
-  notifications         Notification[]
-  playerTeamHistory     PlayerTeamHistory[]
-  trainingAttendance    TrainingAttendance[]
-  matchCallups          MatchCallup[]
-  orderItems            OrderItem[]
-  stockMovements        StockMovement[]
+  users              User[]
+  teams              Team[]
+  players            Player[]
+  trainings          Training[]
+  matches            Match[]
+  payments           Payment[]
+  invoices           Invoice[]
+  stockItems         StockItem[]
+  orders             Order[]
+  notifications      Notification[]
+  playerTeamHistory  PlayerTeamHistory[]
+  trainingAttendance TrainingAttendance[]
+  matchCallups       MatchCallup[]
+  orderItems         OrderItem[]
+  stockMovements     StockMovement[]
+  seasons            Season[]
+  transfersFrom      TransferRequest[]    @relation("TransferFrom")
+  transfersTo        TransferRequest[]    @relation("TransferTo")
+  injuries           Injury[]
 
   @@map("clubs")
 }
 
 model User {
-  id                      String    @id @default(uuid()) @db.Uuid
-  clubId                  String    @map("club_id") @db.Uuid
-  
+  id     String @id @default(uuid()) @db.Uuid
+  clubId String @map("club_id") @db.Uuid
+
   // Auth
-  email                   String    @db.VarChar(255)
-  passwordHash            String    @map("password_hash") @db.VarChar(255)
-  role                    UserRole
-  
+  email        String   @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  role         UserRole
+
   // Profile
-  firstName               String    @map("first_name") @db.VarChar(100)
-  lastName                String    @map("last_name") @db.VarChar(100)
-  phone                   String?   @db.VarChar(20)
-  avatarUrl               String?   @map("avatar_url") @db.Text
-  birthDate               DateTime? @map("birth_date") @db.Date
-  
+  firstName String    @map("first_name") @db.VarChar(100)
+  lastName  String    @map("last_name") @db.VarChar(100)
+  phone     String?   @db.VarChar(20)
+  avatarUrl String?   @map("avatar_url") @db.Text
+  birthDate DateTime? @map("birth_date") @db.Date
+
   // Security
-  emailVerified           Boolean   @default(false) @map("email_verified")
-  emailVerifiedAt         DateTime? @map("email_verified_at") @db.Timestamptz(6)
-  lastLoginAt             DateTime? @map("last_login_at") @db.Timestamptz(6)
-  isActive                Boolean   @default(true) @map("is_active")
-  resetPasswordToken      String?   @map("reset_password_token") @db.VarChar(255)
-  resetPasswordExpiresAt  DateTime? @map("reset_password_expires_at") @db.Timestamptz(6)
-  
+  emailVerified          Boolean   @default(false) @map("email_verified")
+  emailVerifiedAt        DateTime? @map("email_verified_at") @db.Timestamptz(6)
+  lastLoginAt            DateTime? @map("last_login_at") @db.Timestamptz(6)
+  isActive               Boolean   @default(true) @map("is_active")
+  resetPasswordToken     String?   @map("reset_password_token") @db.VarChar(255)
+  resetPasswordExpiresAt DateTime? @map("reset_password_expires_at") @db.Timestamptz(6)
+
   // Audit
-  createdAt               DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt               DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt               DateTime? @map("deleted_at") @db.Timestamptz(6)
-  
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  // Global Identity Link
+  globalParentId String? @map("global_parent_id") @db.Uuid
+
   // Relations
-  club                    Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  
+  club         Club          @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  globalParent GlobalParent? @relation(fields: [globalParentId], references: [id], onDelete: SetNull)
+
   // As parent
-  children                Player[]  @relation("ParentToPlayers")
-  
+  children Player[] @relation("ParentToPlayers")
+
   // As coach
-  teamsAsHead             Team[]    @relation("HeadCoach")
-  teamsAsAssistant        Team[]    @relation("AssistantCoach")
-  trainings               Training[]
-  
+  teamsAsHead      Team[]     @relation("HeadCoach")
+  teamsAsAssistant Team[]     @relation("AssistantCoach")
+  trainings        Training[]
+
   // As payer
-  payments                Payment[] @relation("PayerPayments")
-  processedPayments       Payment[] @relation("ProcessedPayments")
-  
+  payments          Payment[] @relation("PayerPayments")
+  processedPayments Payment[] @relation("ProcessedPayments")
+
   // As customer
-  orders                  Order[]
-  
-  notifications           Notification[]
-  matchCallups            MatchCallup[]
+  orders Order[]
+
+  notifications            Notification[]
+  matchCallups             MatchCallup[]
   trainingAttendanceMarked TrainingAttendance[]
-  stockMovements          StockMovement[]
+  finalizedTrainings       Training[]           @relation("FinalizedTrainings")
+  stockMovements           StockMovement[]
+  createdInjuries          Injury[]
+  reviewedNotices          AbsenceNotice[]      @relation("ReviewedNotices")
 
   @@unique([clubId, email])
   @@map("users")
@@ -189,245 +225,335 @@ model User {
 // MODELS - SPORTS MANAGEMENT
 // ============================================================================
 
-model Team {
-  id                String    @id @default(uuid()) @db.Uuid
-  clubId            String    @map("club_id") @db.Uuid
-  
-  name              String    @db.VarChar(255)
-  category          String?   @db.VarChar(100)
-  gender            String?   @db.VarChar(10)
-  season            String    @db.VarChar(20)
-  
-  // Coaches
-  headCoachId       String?   @map("head_coach_id") @db.Uuid
-  assistantCoachId  String?   @map("assistant_coach_id") @db.Uuid
-  
-  description       String?   @db.Text
-  teamPhotoUrl      String?   @map("team_photo_url") @db.Text
-  
-  // Audit
-  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt         DateTime? @map("deleted_at") @db.Timestamptz(6)
-  
+model Season {
+  id        String   @id @default(uuid()) @db.Uuid
+  clubId    String   @map("club_id") @db.Uuid
+  name      String   @db.VarChar(100)
+  startDate DateTime @map("start_date") @db.Date
+  endDate   DateTime @map("end_date") @db.Date
+  isActive  Boolean  @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
   // Relations
-  club              Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  headCoach         User?     @relation("HeadCoach", fields: [headCoachId], references: [id], onDelete: SetNull)
-  assistantCoach    User?     @relation("AssistantCoach", fields: [assistantCoachId], references: [id], onDelete: SetNull)
-  
+  club  Club   @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  teams Team[]
+
+  @@unique([clubId, name])
+  @@map("seasons")
+}
+
+model Team {
+  id     String @id @default(uuid()) @db.Uuid
+  clubId String @map("club_id") @db.Uuid
+
+  name     String  @db.VarChar(255)
+  category String? @db.VarChar(100)
+  gender   String? @db.VarChar(10)
+  seasonId String  @map("season_id") @db.Uuid
+
+  // Coaches
+  headCoachId      String? @map("head_coach_id") @db.Uuid
+  assistantCoachId String? @map("assistant_coach_id") @db.Uuid
+
+  description  String? @db.Text
+  teamPhotoUrl String? @map("team_photo_url") @db.Text
+
+  // Audit
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  // Relations
+  club           Club   @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  season         Season @relation(fields: [seasonId], references: [id], onDelete: Restrict)
+  headCoach      User?  @relation("HeadCoach", fields: [headCoachId], references: [id], onDelete: SetNull)
+  assistantCoach User?  @relation("AssistantCoach", fields: [assistantCoachId], references: [id], onDelete: SetNull)
+
   players           Player[]
   trainings         Training[]
   matches           Match[]
   playerTeamHistory PlayerTeamHistory[]
 
-  @@unique([clubId, name, season])
+  @@unique([clubId, name, seasonId])
   @@map("teams")
 }
 
 model Player {
-  id                        String    @id @default(uuid()) @db.Uuid
-  clubId                    String    @map("club_id") @db.Uuid
-  
+  id     String @id @default(uuid()) @db.Uuid
+  clubId String @map("club_id") @db.Uuid
+
   // Personal
-  firstName                 String    @map("first_name") @db.VarChar(100)
-  lastName                  String    @map("last_name") @db.VarChar(100)
-  birthDate                 DateTime  @map("birth_date") @db.Date
-  gender                    String?   @db.VarChar(10)
-  photoUrl                  String?   @map("photo_url") @db.Text
-  
+  firstName String   @map("first_name") @db.VarChar(100)
+  lastName  String   @map("last_name") @db.VarChar(100)
+  birthDate DateTime @map("birth_date") @db.Date
+  gender    String?  @db.VarChar(10)
+  photoUrl  String?  @map("photo_url") @db.Text
+
   // Parent
-  parentId                  String    @map("parent_id") @db.Uuid
-  
+  parentId String @map("parent_id") @db.Uuid
+
   // Team
-  currentTeamId             String?   @map("current_team_id") @db.Uuid
-  
+  currentTeamId String? @map("current_team_id") @db.Uuid
+
   // Player details
-  jerseyNumber              Int?      @map("jersey_number")
-  preferredPosition         PlayerPosition? @map("preferred_position")
-  heightCm                  Int?      @map("height_cm")
-  weightKg                  Decimal?  @map("weight_kg") @db.Decimal(5, 2)
-  
+  jerseyNumber      Int?            @map("jersey_number")
+  preferredPosition PlayerPosition? @map("preferred_position")
+  heightCm          Int?            @map("height_cm")
+  weightKg          Decimal?        @map("weight_kg") @db.Decimal(5, 2)
+
   // Emergency
-  emergencyContactName      String?   @map("emergency_contact_name") @db.VarChar(255)
-  emergencyContactPhone     String?   @map("emergency_contact_phone") @db.VarChar(20)
-  
+  emergencyContactName  String? @map("emergency_contact_name") @db.VarChar(255)
+  emergencyContactPhone String? @map("emergency_contact_phone") @db.VarChar(20)
+
   // Health
-  bloodType                 String?   @map("blood_type") @db.VarChar(5)
-  allergies                 String?   @db.Text
-  medicalConditions         String?   @map("medical_conditions") @db.Text
-  medicalCertificateUrl     String?   @map("medical_certificate_url") @db.Text
+  bloodType                   String?   @map("blood_type") @db.VarChar(5)
+  allergies                   String?   @db.Text
+  medicalConditions           String?   @map("medical_conditions") @db.Text
+  medicalCertificateUrl       String?   @map("medical_certificate_url") @db.Text
   medicalCertificateExpiresAt DateTime? @map("medical_certificate_expires_at") @db.Date
-  
+
   // Docs
-  citizenCardNumber         String?   @map("citizen_card_number") @db.VarChar(50)
-  taxId                     String?   @map("tax_id") @db.VarChar(50)
-  
+  citizenCardNumber String? @map("citizen_card_number") @db.VarChar(50)
+  taxId             String? @map("tax_id") @db.VarChar(50)
+
   // Status
-  isActive                  Boolean   @default(true) @map("is_active")
-  registrationDate          DateTime  @default(now()) @map("registration_date") @db.Date
-  
+  isActive         Boolean  @default(true) @map("is_active")
+  registrationDate DateTime @default(now()) @map("registration_date") @db.Date
+
   // Audit
-  createdAt                 DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt                 DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt                 DateTime? @map("deleted_at") @db.Timestamptz(6)
-  
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  // Global Passport Link
+  athleteId String? @map("athlete_id") @db.Uuid
+
+  // Status Control
+  status                PlayerStatus  @default(ACTIVE)
+  medicalStatus         MedicalStatus @default(FIT) @map("medical_status")
+  withdrawalRequestedAt DateTime?     @map("withdrawal_requested_at") @db.Timestamptz(6)
+
+  // Withdrawal (Modelo 2)
+  withdrawalReason     String?   @map("withdrawal_reason") @db.Text
+  destinationClubEmail String?   @map("destination_club_email") @db.VarChar(255)
+  withdrawalLetterUrl  String?   @map("withdrawal_letter_url") @db.Text
+  documentsSentAt      DateTime? @map("documents_sent_at") @db.Timestamptz(6)
+
   // Relations
-  club                      Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  parent                    User      @relation("ParentToPlayers", fields: [parentId], references: [id], onDelete: Restrict)
-  currentTeam               Team?     @relation(fields: [currentTeamId], references: [id], onDelete: SetNull)
-  
-  payments                  Payment[]
-  teamHistory               PlayerTeamHistory[]
-  trainingAttendance        TrainingAttendance[]
-  matchCallups              MatchCallup[]
+  club        Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  parent      User     @relation("ParentToPlayers", fields: [parentId], references: [id], onDelete: Restrict)
+  athlete     Athlete? @relation(fields: [athleteId], references: [id], onDelete: SetNull)
+  currentTeam Team?    @relation(fields: [currentTeamId], references: [id], onDelete: SetNull)
+
+  payments           Payment[]
+  teamHistory        PlayerTeamHistory[]
+  trainingAttendance TrainingAttendance[]
+  matchCallups       MatchCallup[]
+  injuries           Injury[]
+  absenceNotices     AbsenceNotice[]
 
   @@map("players")
 }
 
-model PlayerTeamHistory {
-  id          String    @id @default(uuid()) @db.Uuid
-  clubId      String    @map("club_id") @db.Uuid
-  playerId    String    @map("player_id") @db.Uuid
-  teamId      String    @map("team_id") @db.Uuid
-  
-  joinedAt    DateTime  @default(now()) @map("joined_at") @db.Date
-  leftAt      DateTime? @map("left_at") @db.Date
-  
-  matchesPlayed Int     @default(0) @map("matches_played")
-  goalsScored   Int     @default(0) @map("goals_scored")
-  
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  
+enum PlayerStatus {
+  ACTIVE
+  PENDING_WITHDRAWAL
+  LEFT
+  SUSPENDED
+
+  @@map("player_status")
+}
+
+enum MedicalStatus {
+  FIT
+  INJURED
+  SICK
+  CONDITIONED
+
+  @@map("medical_status")
+}
+
+model Injury {
+  id       String @id @default(uuid()) @db.Uuid
+  clubId   String @map("club_id") @db.Uuid
+  playerId String @map("player_id") @db.Uuid
+
+  status      MedicalStatus @default(INJURED)
+  name        String        @db.VarChar(255) // e.g. "Hematoma na coxa"
+  description String?       @db.Text
+
+  startDate DateTime  @default(now()) @map("start_date") @db.Date
+  endDate   DateTime? @map("end_date") @db.Date // Alta médica
+
+  createdByUserId String?  @map("created_by_user_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
   // Relations
-  club        Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  player      Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  team        Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  club          Club   @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  player        Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  createdByUser User?  @relation(fields: [createdByUserId], references: [id])
+
+  @@map("injuries")
+}
+
+model PlayerTeamHistory {
+  id       String @id @default(uuid()) @db.Uuid
+  clubId   String @map("club_id") @db.Uuid
+  playerId String @map("player_id") @db.Uuid
+  teamId   String @map("team_id") @db.Uuid
+
+  joinedAt DateTime  @default(now()) @map("joined_at") @db.Date
+  leftAt   DateTime? @map("left_at") @db.Date
+
+  matchesPlayed Int @default(0) @map("matches_played")
+  goalsScored   Int @default(0) @map("goals_scored")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  club   Club   @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  player Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  team   Team   @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@map("player_team_history")
 }
 
 model Training {
-  id                String    @id @default(uuid()) @db.Uuid
-  clubId            String    @map("club_id") @db.Uuid
-  teamId            String    @map("team_id") @db.Uuid
-  coachId           String    @map("coach_id") @db.Uuid
-  
-  scheduledDate     DateTime  @map("scheduled_date") @db.Date
-  startTime         DateTime  @map("start_time") @db.Time(6)
-  endTime           DateTime  @map("end_time") @db.Time(6)
-  
-  location          String    @db.VarChar(255)
-  fieldType         String?   @map("field_type") @db.VarChar(50)
-  
-  title             String?   @db.VarChar(255)
-  objectives        String?   @db.Text
-  exercises         Json      @default("[]")
-  notes             String?   @db.Text
-  
-  isCancelled       Boolean   @default(false) @map("is_cancelled")
-  cancellationReason String?  @map("cancellation_reason") @db.Text
-  
-  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+  id      String @id @default(uuid()) @db.Uuid
+  clubId  String @map("club_id") @db.Uuid
+  teamId  String @map("team_id") @db.Uuid
+  coachId String @map("coach_id") @db.Uuid
+
+  scheduledDate DateTime @map("scheduled_date") @db.Date
+  startTime     DateTime @map("start_time") @db.Time(6)
+  endTime       DateTime @map("end_time") @db.Time(6)
+
+  location  String  @db.VarChar(255)
+  fieldType String? @map("field_type") @db.VarChar(50)
+
+  title       String? @db.VarChar(255)
+  objectives  String? @db.Text
+  exercises   Json    @default("[]")
+  notes       String? @db.Text
+  planFileUrl String? @map("plan_file_url") @db.Text
+
+  isCancelled        Boolean @default(false) @map("is_cancelled")
+  cancellationReason String? @map("cancellation_reason") @db.Text
+
+  // Lock/Finalize Training
+  isFinalized       Boolean   @default(false) @map("is_finalized")
+  finalizedAt       DateTime? @map("finalized_at") @db.Timestamptz(6)
+  finalizedByUserId String?   @map("finalized_by_user_id") @db.Uuid
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
   // Relations
-  club              Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  team              Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  coach             User      @relation(fields: [coachId], references: [id], onDelete: Restrict)
-  
-  attendance        TrainingAttendance[]
+  club            Club  @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  team            Team  @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  coach           User  @relation(fields: [coachId], references: [id], onDelete: Restrict)
+  finalizedByUser User? @relation("FinalizedTrainings", fields: [finalizedByUserId], references: [id])
+
+  attendance     TrainingAttendance[]
+  absenceNotices AbsenceNotice[]
 
   @@map("trainings")
 }
 
 model TrainingAttendance {
-  id              String    @id @default(uuid()) @db.Uuid
-  clubId          String    @map("club_id") @db.Uuid
-  trainingId      String    @map("training_id") @db.Uuid
-  playerId        String    @map("player_id") @db.Uuid
-  
-  status          AttendanceStatus @default(PRESENT)
-  arrivedAt       DateTime? @map("arrived_at") @db.Time(6)
-  justification   String?   @db.Text
-  notes           String?   @db.Text
-  
-  markedByUserId  String?   @map("marked_by_user_id") @db.Uuid
-  markedAt        DateTime? @map("marked_at") @db.Timestamptz(6)
-  
-  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt       DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+  id         String @id @default(uuid()) @db.Uuid
+  clubId     String @map("club_id") @db.Uuid
+  trainingId String @map("training_id") @db.Uuid
+  playerId   String @map("player_id") @db.Uuid
+
+  status        AttendanceStatus @default(PRESENT)
+  arrivedAt     DateTime?        @map("arrived_at") @db.Time(6)
+  justification String?          @db.Text
+  notes         String?          @db.Text
+
+  markedByUserId String?   @map("marked_by_user_id") @db.Uuid
+  markedAt       DateTime? @map("marked_at") @db.Timestamptz(6)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
   // Relations
-  club            Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  training        Training  @relation(fields: [trainingId], references: [id], onDelete: Cascade)
-  player          Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  markedByUser    User?     @relation(fields: [markedByUserId], references: [id])
+  club         Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  training     Training @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  player       Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  markedByUser User?    @relation(fields: [markedByUserId], references: [id])
 
   @@unique([trainingId, playerId])
   @@map("training_attendance")
 }
 
 model Match {
-  id            String    @id @default(uuid()) @db.Uuid
-  clubId        String    @map("club_id") @db.Uuid
-  teamId        String    @map("team_id") @db.Uuid
-  
-  opponentName  String    @map("opponent_name") @db.VarChar(255)
-  competition   String?   @db.VarChar(255)
-  
-  matchDate     DateTime  @map("match_date") @db.Date
-  matchTime     DateTime? @map("match_time") @db.Time(6)
-  location      String    @db.VarChar(255)
-  isHomeMatch   Boolean   @default(true) @map("is_home_match")
-  
-  result        MatchResult @default(SCHEDULED)
-  goalsFor      Int?      @map("goals_for")
-  goalsAgainst  Int?      @map("goals_against")
-  
-  statistics    Json      @default("{}")
-  notes         String?   @db.Text
-  
-  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt     DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+  id     String @id @default(uuid()) @db.Uuid
+  clubId String @map("club_id") @db.Uuid
+  teamId String @map("team_id") @db.Uuid
+
+  opponentName String  @map("opponent_name") @db.VarChar(255)
+  competition  String? @db.VarChar(255)
+
+  matchDate   DateTime  @map("match_date") @db.Date
+  matchTime   DateTime? @map("match_time") @db.Time(6)
+  location    String    @db.VarChar(255)
+  isHomeMatch Boolean   @default(true) @map("is_home_match")
+
+  result       MatchResult @default(SCHEDULED)
+  goalsFor     Int?        @map("goals_for")
+  goalsAgainst Int?        @map("goals_against")
+
+  statistics Json    @default("{}")
+  notes      String? @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
   // Relations
-  club          Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  team          Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  
-  callups       MatchCallup[]
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  callups MatchCallup[]
 
   @@map("matches")
 }
 
 model MatchCallup {
-  id                  String    @id @default(uuid()) @db.Uuid
-  clubId              String    @map("club_id") @db.Uuid
-  matchId             String    @map("match_id") @db.Uuid
-  playerId            String    @map("player_id") @db.Uuid
-  
-  isStarter           Boolean   @default(false) @map("is_starter")
-  position            PlayerPosition?
-  jerseyNumber        Int?      @map("jersey_number")
-  
-  played              Boolean   @default(false)
-  minutesPlayed       Int       @default(0) @map("minutes_played")
-  goalsScored         Int       @default(0) @map("goals_scored")
-  assists             Int       @default(0)
-  yellowCards         Int       @default(0) @map("yellow_cards")
-  redCard             Boolean   @default(false) @map("red_card")
-  
-  performanceRating   Decimal?  @map("performance_rating") @db.Decimal(3, 1)
-  notes               String?   @db.Text
-  
-  createdByUserId     String?   @map("created_by_user_id") @db.Uuid
-  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+  id       String @id @default(uuid()) @db.Uuid
+  clubId   String @map("club_id") @db.Uuid
+  matchId  String @map("match_id") @db.Uuid
+  playerId String @map("player_id") @db.Uuid
+
+  isStarter    Boolean         @default(false) @map("is_starter")
+  position     PlayerPosition?
+  jerseyNumber Int?            @map("jersey_number")
+
+  // Parent Confirmation
+  confirmedByParent Boolean   @default(false) @map("confirmed_by_parent")
+  confirmedAt       DateTime? @map("confirmed_at") @db.Timestamptz(6)
+
+  played        Boolean @default(false)
+  minutesPlayed Int     @default(0) @map("minutes_played")
+  goalsScored   Int     @default(0) @map("goals_scored")
+  yellowCards   Int     @default(0) @map("yellow_cards")
+  redCard       Boolean @default(false) @map("red_card")
+
+  coachRating Decimal? @map("coach_rating") @db.Decimal(3, 1) // 0.0 to 10.0
+  notes       String?  @db.Text
+
+  createdByUserId String?  @map("created_by_user_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
   // Relations
-  club                Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  match               Match     @relation(fields: [matchId], references: [id], onDelete: Cascade)
-  player              Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  createdByUser       User?     @relation(fields: [createdByUserId], references: [id])
+  club          Club   @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  match         Match  @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  player        Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  createdByUser User?  @relation(fields: [createdByUserId], references: [id])
 
   @@unique([matchId, playerId])
   @@map("match_callups")
@@ -438,233 +564,233 @@ model MatchCallup {
 // ============================================================================
 
 model Payment {
-  id                  String    @id @default(uuid()) @db.Uuid
-  clubId              String    @map("club_id") @db.Uuid
-  playerId            String    @map("player_id") @db.Uuid
-  payerId             String    @map("payer_id") @db.Uuid
-  
-  paymentType         PaymentType @map("payment_type")
-  amount              Decimal   @db.Decimal(10, 2)
-  currency            String    @default("EUR") @db.VarChar(3)
-  
-  status              PaymentStatus @default(PENDING)
-  paymentMethod       PaymentMethod? @map("payment_method")
-  referenceCode       String?   @map("reference_code") @db.VarChar(100)
-  transactionId       String?   @map("transaction_id") @db.VarChar(255)
-  
-  dueDate             DateTime  @map("due_date") @db.Date
-  paidAt              DateTime? @map("paid_at") @db.Timestamptz(6)
-  
-  periodStart         DateTime? @map("period_start") @db.Date
-  periodEnd           DateTime? @map("period_end") @db.Date
-  
-  description         String?   @db.Text
-  notes               String?   @db.Text
-  
-  reminderSentCount   Int       @default(0) @map("reminder_sent_count")
-  lastReminderSentAt  DateTime? @map("last_reminder_sent_at") @db.Timestamptz(6)
-  
-  processedByUserId   String?   @map("processed_by_user_id") @db.Uuid
-  
-  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt           DateTime? @map("deleted_at") @db.Timestamptz(6)
-  
+  id       String @id @default(uuid()) @db.Uuid
+  clubId   String @map("club_id") @db.Uuid
+  playerId String @map("player_id") @db.Uuid
+  payerId  String @map("payer_id") @db.Uuid
+
+  paymentType PaymentType @map("payment_type")
+  amount      Decimal     @db.Decimal(10, 2)
+  currency    String      @default("EUR") @db.VarChar(3)
+
+  status        PaymentStatus  @default(PENDING)
+  paymentMethod PaymentMethod? @map("payment_method")
+  referenceCode String?        @map("reference_code") @db.VarChar(100)
+  transactionId String?        @map("transaction_id") @db.VarChar(255)
+
+  dueDate DateTime  @map("due_date") @db.Date
+  paidAt  DateTime? @map("paid_at") @db.Timestamptz(6)
+
+  periodStart DateTime? @map("period_start") @db.Date
+  periodEnd   DateTime? @map("period_end") @db.Date
+
+  description String? @db.Text
+  notes       String? @db.Text
+
+  reminderSentCount  Int       @default(0) @map("reminder_sent_count")
+  lastReminderSentAt DateTime? @map("last_reminder_sent_at") @db.Timestamptz(6)
+
+  processedByUserId String? @map("processed_by_user_id") @db.Uuid
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+
   // Relations
-  club                Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  player              Player    @relation(fields: [playerId], references: [id], onDelete: Cascade)
-  payer               User      @relation("PayerPayments", fields: [payerId], references: [id], onDelete: Restrict)
-  processedByUser     User?     @relation("ProcessedPayments", fields: [processedByUserId], references: [id])
-  
-  invoices            Invoice[]
-  orders              Order[]
+  club            Club   @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  player          Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  payer           User   @relation("PayerPayments", fields: [payerId], references: [id], onDelete: Restrict)
+  processedByUser User?  @relation("ProcessedPayments", fields: [processedByUserId], references: [id])
+
+  invoices Invoice[]
+  orders   Order[]
 
   @@map("payments")
 }
 
 model Invoice {
-  id                String    @id @default(uuid()) @db.Uuid
-  clubId            String    @map("club_id") @db.Uuid
-  paymentId         String?   @map("payment_id") @db.Uuid
-  
-  invoiceNumber     String    @map("invoice_number") @db.VarChar(50)
-  invoiceSeries     String    @default("A") @map("invoice_series") @db.VarChar(10)
-  
-  subtotal          Decimal   @db.Decimal(10, 2)
-  taxRate           Decimal   @default(0) @map("tax_rate") @db.Decimal(5, 2)
-  taxAmount         Decimal   @default(0) @map("tax_amount") @db.Decimal(10, 2)
-  totalAmount       Decimal   @map("total_amount") @db.Decimal(10, 2)
-  
-  billedToName      String    @map("billed_to_name") @db.VarChar(255)
-  billedToTaxId     String?   @map("billed_to_tax_id") @db.VarChar(50)
-  billedToAddress   String?   @map("billed_to_address") @db.Text
-  
-  items             Json      @default("[]")
-  
-  issueDate         DateTime  @default(now()) @map("issue_date") @db.Date
-  dueDate           DateTime? @map("due_date") @db.Date
-  
-  pdfUrl            String?   @map("pdf_url") @db.Text
-  pdfGeneratedAt    DateTime? @map("pdf_generated_at") @db.Timestamptz(6)
-  
-  isCancelled       Boolean   @default(false) @map("is_cancelled")
-  cancelledAt       DateTime? @map("cancelled_at") @db.Timestamptz(6)
-  cancellationReason String?  @map("cancellation_reason") @db.Text
-  
-  notes             String?   @db.Text
-  
-  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt         DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+  id        String  @id @default(uuid()) @db.Uuid
+  clubId    String  @map("club_id") @db.Uuid
+  paymentId String? @map("payment_id") @db.Uuid
+
+  invoiceNumber String @map("invoice_number") @db.VarChar(50)
+  invoiceSeries String @default("A") @map("invoice_series") @db.VarChar(10)
+
+  subtotal    Decimal @db.Decimal(10, 2)
+  taxRate     Decimal @default(0) @map("tax_rate") @db.Decimal(5, 2)
+  taxAmount   Decimal @default(0) @map("tax_amount") @db.Decimal(10, 2)
+  totalAmount Decimal @map("total_amount") @db.Decimal(10, 2)
+
+  billedToName    String  @map("billed_to_name") @db.VarChar(255)
+  billedToTaxId   String? @map("billed_to_tax_id") @db.VarChar(50)
+  billedToAddress String? @map("billed_to_address") @db.Text
+
+  items Json @default("[]")
+
+  issueDate DateTime  @default(now()) @map("issue_date") @db.Date
+  dueDate   DateTime? @map("due_date") @db.Date
+
+  pdfUrl         String?   @map("pdf_url") @db.Text
+  pdfGeneratedAt DateTime? @map("pdf_generated_at") @db.Timestamptz(6)
+
+  isCancelled        Boolean   @default(false) @map("is_cancelled")
+  cancelledAt        DateTime? @map("cancelled_at") @db.Timestamptz(6)
+  cancellationReason String?   @map("cancellation_reason") @db.Text
+
+  notes String? @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
   // Relations
-  club              Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  payment           Payment?  @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  club    Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  payment Payment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
 
   @@unique([clubId, invoiceSeries, invoiceNumber])
   @@map("invoices")
 }
 
 model StockItem {
-  id                  String    @id @default(uuid()) @db.Uuid
-  clubId              String    @map("club_id") @db.Uuid
-  
-  name                String    @db.VarChar(255)
-  description         String?   @db.Text
-  sku                 String?   @db.VarChar(100)
-  category            String?   @db.VarChar(100)
-  
-  price               Decimal   @db.Decimal(10, 2)
-  costPrice           Decimal?  @map("cost_price") @db.Decimal(10, 2)
-  currency            String    @default("EUR") @db.VarChar(3)
-  
-  stockQuantity       Int       @default(0) @map("stock_quantity")
-  lowStockThreshold   Int       @default(5) @map("low_stock_threshold")
-  
-  sizesAvailable      String[]  @map("sizes_available")
-  colorsAvailable     String[]  @map("colors_available")
-  
-  imageUrl            String?   @map("image_url") @db.Text
-  additionalImages    String[]  @map("additional_images")
-  
-  isActive            Boolean   @default(true) @map("is_active")
-  isFeatured          Boolean   @default(false) @map("is_featured")
-  displayOrder        Int       @default(0) @map("display_order")
-  
-  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt           DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt           DateTime? @map("deleted_at") @db.Timestamptz(6)
-  
+  id     String @id @default(uuid()) @db.Uuid
+  clubId String @map("club_id") @db.Uuid
+
+  name        String  @db.VarChar(255)
+  description String? @db.Text
+  sku         String? @db.VarChar(100)
+  category    String? @db.VarChar(100)
+
+  price     Decimal  @db.Decimal(10, 2)
+  costPrice Decimal? @map("cost_price") @db.Decimal(10, 2)
+  currency  String   @default("EUR") @db.VarChar(3)
+
+  stockQuantity     Int @default(0) @map("stock_quantity")
+  lowStockThreshold Int @default(5) @map("low_stock_threshold")
+
+  sizesAvailable  String[] @map("sizes_available")
+  colorsAvailable String[] @map("colors_available")
+
+  imageUrl         String?  @map("image_url") @db.Text
+  additionalImages String[] @map("additional_images")
+
+  isActive     Boolean @default(true) @map("is_active")
+  isFeatured   Boolean @default(false) @map("is_featured")
+  displayOrder Int     @default(0) @map("display_order")
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+
   // Relations
-  club                Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  
-  orderItems          OrderItem[]
-  stockMovements      StockMovement[]
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+
+  orderItems     OrderItem[]
+  stockMovements StockMovement[]
 
   @@map("stock_items")
 }
 
 model Order {
-  id                    String    @id @default(uuid()) @db.Uuid
-  clubId                String    @map("club_id") @db.Uuid
-  customerId            String    @map("customer_id") @db.Uuid
-  
-  orderNumber           String    @map("order_number") @db.VarChar(50)
-  status                OrderStatus @default(CART)
-  
-  subtotal              Decimal   @db.Decimal(10, 2)
-  shippingCost          Decimal   @default(0) @map("shipping_cost") @db.Decimal(10, 2)
-  taxAmount             Decimal   @default(0) @map("tax_amount") @db.Decimal(10, 2)
-  discountAmount        Decimal   @default(0) @map("discount_amount") @db.Decimal(10, 2)
-  totalAmount           Decimal   @map("total_amount") @db.Decimal(10, 2)
-  currency              String    @default("EUR") @db.VarChar(3)
-  
-  shippingAddress       String?   @map("shipping_address") @db.Text
-  shippingCity          String?   @map("shipping_city") @db.VarChar(100)
-  shippingPostalCode    String?   @map("shipping_postal_code") @db.VarChar(20)
-  shippingCountry       String    @default("Portugal") @map("shipping_country") @db.VarChar(100)
-  
+  id         String @id @default(uuid()) @db.Uuid
+  clubId     String @map("club_id") @db.Uuid
+  customerId String @map("customer_id") @db.Uuid
+
+  orderNumber String      @map("order_number") @db.VarChar(50)
+  status      OrderStatus @default(CART)
+
+  subtotal       Decimal @db.Decimal(10, 2)
+  shippingCost   Decimal @default(0) @map("shipping_cost") @db.Decimal(10, 2)
+  taxAmount      Decimal @default(0) @map("tax_amount") @db.Decimal(10, 2)
+  discountAmount Decimal @default(0) @map("discount_amount") @db.Decimal(10, 2)
+  totalAmount    Decimal @map("total_amount") @db.Decimal(10, 2)
+  currency       String  @default("EUR") @db.VarChar(3)
+
+  shippingAddress    String? @map("shipping_address") @db.Text
+  shippingCity       String? @map("shipping_city") @db.VarChar(100)
+  shippingPostalCode String? @map("shipping_postal_code") @db.VarChar(20)
+  shippingCountry    String  @default("Portugal") @map("shipping_country") @db.VarChar(100)
+
   estimatedDeliveryDate DateTime? @map("estimated_delivery_date") @db.Date
   deliveredAt           DateTime? @map("delivered_at") @db.Timestamptz(6)
   trackingNumber        String?   @map("tracking_number") @db.VarChar(255)
-  
-  paymentId             String?   @map("payment_id") @db.Uuid
-  paymentMethod         PaymentMethod? @map("payment_method")
-  
-  customerNotes         String?   @map("customer_notes") @db.Text
-  internalNotes         String?   @map("internal_notes") @db.Text
-  
-  placedAt              DateTime? @map("placed_at") @db.Timestamptz(6)
-  paidAt                DateTime? @map("paid_at") @db.Timestamptz(6)
-  shippedAt             DateTime? @map("shipped_at") @db.Timestamptz(6)
-  cancelledAt           DateTime? @map("cancelled_at") @db.Timestamptz(6)
-  
-  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt             DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  
+
+  paymentId     String?        @map("payment_id") @db.Uuid
+  paymentMethod PaymentMethod? @map("payment_method")
+
+  customerNotes String? @map("customer_notes") @db.Text
+  internalNotes String? @map("internal_notes") @db.Text
+
+  placedAt    DateTime? @map("placed_at") @db.Timestamptz(6)
+  paidAt      DateTime? @map("paid_at") @db.Timestamptz(6)
+  shippedAt   DateTime? @map("shipped_at") @db.Timestamptz(6)
+  cancelledAt DateTime? @map("cancelled_at") @db.Timestamptz(6)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
   // Relations
-  club                  Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  customer              User      @relation(fields: [customerId], references: [id], onDelete: Restrict)
-  payment               Payment?  @relation(fields: [paymentId], references: [id], onDelete: SetNull)
-  
-  items                 OrderItem[]
+  club     Club     @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  customer User     @relation(fields: [customerId], references: [id], onDelete: Restrict)
+  payment  Payment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  items OrderItem[]
 
   @@unique([clubId, orderNumber])
   @@map("orders")
 }
 
 model OrderItem {
-  id              String    @id @default(uuid()) @db.Uuid
-  clubId          String    @map("club_id") @db.Uuid
-  orderId         String    @map("order_id") @db.Uuid
-  stockItemId     String    @map("stock_item_id") @db.Uuid
-  
-  productName     String    @map("product_name") @db.VarChar(255)
-  productSku      String?   @map("product_sku") @db.VarChar(100)
-  
-  selectedSize    String?   @map("selected_size") @db.VarChar(50)
-  selectedColor   String?   @map("selected_color") @db.VarChar(50)
-  
-  unitPrice       Decimal   @map("unit_price") @db.Decimal(10, 2)
-  quantity        Int
-  subtotal        Decimal   @db.Decimal(10, 2)
-  discountAmount  Decimal   @default(0) @map("discount_amount") @db.Decimal(10, 2)
-  totalAmount     Decimal   @map("total_amount") @db.Decimal(10, 2)
-  
-  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  
+  id          String @id @default(uuid()) @db.Uuid
+  clubId      String @map("club_id") @db.Uuid
+  orderId     String @map("order_id") @db.Uuid
+  stockItemId String @map("stock_item_id") @db.Uuid
+
+  productName String  @map("product_name") @db.VarChar(255)
+  productSku  String? @map("product_sku") @db.VarChar(100)
+
+  selectedSize  String? @map("selected_size") @db.VarChar(50)
+  selectedColor String? @map("selected_color") @db.VarChar(50)
+
+  unitPrice      Decimal @map("unit_price") @db.Decimal(10, 2)
+  quantity       Int
+  subtotal       Decimal @db.Decimal(10, 2)
+  discountAmount Decimal @default(0) @map("discount_amount") @db.Decimal(10, 2)
+  totalAmount    Decimal @map("total_amount") @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
   // Relations
-  club            Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  order           Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  stockItem       StockItem @relation(fields: [stockItemId], references: [id], onDelete: Restrict)
-  
-  stockMovements  StockMovement[]
+  club      Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  order     Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  stockItem StockItem @relation(fields: [stockItemId], references: [id], onDelete: Restrict)
+
+  stockMovements StockMovement[]
 
   @@map("order_items")
 }
 
 model StockMovement {
-  id              String    @id @default(uuid()) @db.Uuid
-  clubId          String    @map("club_id") @db.Uuid
-  stockItemId     String    @map("stock_item_id") @db.Uuid
-  
-  movementType    String    @db.VarChar(50)
-  quantity        Int
-  
-  orderItemId     String?   @map("order_item_id") @db.Uuid
-  
-  quantityBefore  Int       @map("quantity_before")
-  quantityAfter   Int       @map("quantity_after")
-  
-  reason          String?   @db.Text
-  
-  createdByUserId String?   @map("created_by_user_id") @db.Uuid
-  createdAt       DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  
+  id          String @id @default(uuid()) @db.Uuid
+  clubId      String @map("club_id") @db.Uuid
+  stockItemId String @map("stock_item_id") @db.Uuid
+
+  movementType String @db.VarChar(50)
+  quantity     Int
+
+  orderItemId String? @map("order_item_id") @db.Uuid
+
+  quantityBefore Int @map("quantity_before")
+  quantityAfter  Int @map("quantity_after")
+
+  reason String? @db.Text
+
+  createdByUserId String?  @map("created_by_user_id") @db.Uuid
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
   // Relations
-  club            Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  stockItem       StockItem @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
-  orderItem       OrderItem? @relation(fields: [orderItemId], references: [id])
-  createdByUser   User?     @relation(fields: [createdByUserId], references: [id])
+  club          Club       @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  stockItem     StockItem  @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
+  orderItem     OrderItem? @relation(fields: [orderItemId], references: [id])
+  createdByUser User?      @relation(fields: [createdByUserId], references: [id])
 
   @@map("stock_movements")
 }
@@ -674,29 +800,153 @@ model StockMovement {
 // ============================================================================
 
 model Notification {
-  id                String    @id @default(uuid()) @db.Uuid
-  clubId            String    @map("club_id") @db.Uuid
-  userId            String    @map("user_id") @db.Uuid
-  
-  type              String    @db.VarChar(100)
-  title             String    @db.VarChar(255)
-  message           String    @db.Text
-  
-  relatedEntityType String?   @map("related_entity_type") @db.VarChar(100)
-  relatedEntityId   String?   @map("related_entity_id") @db.Uuid
-  
-  actionUrl         String?   @map("action_url") @db.Text
-  
-  isRead            Boolean   @default(false) @map("is_read")
-  readAt            DateTime? @map("read_at") @db.Timestamptz(6)
-  
-  sentVia           String[]  @map("sent_via")
-  
-  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  
+  id     String @id @default(uuid()) @db.Uuid
+  clubId String @map("club_id") @db.Uuid
+  userId String @map("user_id") @db.Uuid
+
+  type    String @db.VarChar(100)
+  title   String @db.VarChar(255)
+  message String @db.Text
+
+  relatedEntityType String? @map("related_entity_type") @db.VarChar(100)
+  relatedEntityId   String? @map("related_entity_id") @db.Uuid
+
+  actionUrl String? @map("action_url") @db.Text
+
+  isRead Boolean   @default(false) @map("is_read")
+  readAt DateTime? @map("read_at") @db.Timestamptz(6)
+
+  sentVia String[] @map("sent_via")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
   // Relations
-  club              Club      @relation(fields: [clubId], references: [id], onDelete: Cascade)
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("notifications")
+}
+
+// ============================================================================
+// MODELS - GLOBAL IDENTITY & PLAYER PASSPORT
+// ============================================================================
+
+model GlobalParent {
+  id           String @id @default(uuid()) @db.Uuid
+  email        String @unique @db.VarChar(255)
+  passwordHash String @map("password_hash") @db.VarChar(255)
+  firstName    String @map("first_name") @db.VarChar(100)
+  lastName     String @map("last_name") @db.VarChar(100)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  athletes         Athlete[]
+  clubUsers        User[] // Contas de clube ligadas a este pai global
+  submittedNotices AbsenceNotice[] @relation("SubmittedNotices")
+
+  @@map("global_parents")
+}
+
+model Athlete {
+  id             String @id @default(uuid()) @db.Uuid
+  publicId       String @unique @map("public_id") @db.VarChar(10) // ID curto para partilha (ex: PT-123456)
+  globalParentId String @map("global_parent_id") @db.Uuid
+
+  // Dados Pessoais (Imutáveis/Globais)
+  firstName   String   @map("first_name") @db.VarChar(100)
+  lastName    String   @map("last_name") @db.VarChar(100)
+  birthDate   DateTime @map("birth_date") @db.Date
+  gender      String?  @db.VarChar(10)
+  citizenCard String?  @map("citizen_card") @db.VarChar(50)
+  taxId       String?  @map("tax_id") @db.VarChar(50)
+
+  // Dados Médicos Globais
+  medicalConditions String? @map("medical_conditions") @db.Text
+  allergies         String? @db.Text
+
+  // Controlo de Inscrição Ativa
+  currentClubId String? @map("current_club_id") @db.Uuid
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  globalParent     GlobalParent      @relation(fields: [globalParentId], references: [id], onDelete: Cascade)
+  players          Player[] // Histórico de inscrições em clubes
+  transferRequests TransferRequest[]
+  absenceNotices   AbsenceNotice[]
+
+  @@map("athletes")
+}
+
+enum TransferStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+
+  @@map("transfer_status")
+}
+
+model TransferRequest {
+  id         String  @id @default(uuid()) @db.Uuid
+  athleteId  String  @map("athlete_id") @db.Uuid
+  fromClubId String? @map("from_club_id") @db.Uuid // Pode ser null se não tiver clube
+  toClubId   String  @map("to_club_id") @db.Uuid
+
+  status TransferStatus @default(PENDING)
+
+  requestedAt DateTime @default(now()) @map("requested_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+  expiresAt   DateTime @map("expires_at") @db.Timestamptz(6)
+
+  // Relations
+  athlete  Athlete @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  fromClub Club?   @relation("TransferFrom", fields: [fromClubId], references: [id])
+  toClub   Club    @relation("TransferTo", fields: [toClubId], references: [id])
+
+  @@map("transfer_requests")
+}
+
+// ============================================================================
+// MODELS - ABSENCE NOTICES (Parent Notifications)
+// ============================================================================
+
+model AbsenceNotice {
+  id String @id @default(uuid()) @db.Uuid
+
+  // Relação com atleta/jogador
+  athleteId  String  @map("athlete_id") @db.Uuid
+  playerId   String? @map("player_id") @db.Uuid // Pode ser null se atleta não tiver player no clube
+  trainingId String  @map("training_id") @db.Uuid
+
+  // Quem submeteu (pai global)
+  submittedByParentId String @map("submitted_by_parent_id") @db.Uuid
+
+  // Tipo: PRESENCE ou ABSENCE
+  type   String              @default("ABSENCE") @db.VarChar(20) // "PRESENCE" ou "ABSENCE"
+  reason String?             @db.Text // Justificação (obrigatória para ausência)
+  status AbsenceNoticeStatus @default(PENDING)
+
+  // Validação do treinador
+  reviewedByUserId String?   @map("reviewed_by_user_id") @db.Uuid
+  reviewedAt       DateTime? @map("reviewed_at") @db.Timestamptz(6)
+  reviewNotes      String?   @map("review_notes") @db.Text
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  athlete     Athlete      @relation(fields: [athleteId], references: [id], onDelete: Cascade)
+  player      Player?      @relation(fields: [playerId], references: [id], onDelete: SetNull)
+  training    Training     @relation(fields: [trainingId], references: [id], onDelete: Cascade)
+  submittedBy GlobalParent @relation("SubmittedNotices", fields: [submittedByParentId], references: [id], onDelete: Cascade)
+  reviewedBy  User?        @relation("ReviewedNotices", fields: [reviewedByUserId], references: [id])
+
+  @@index([trainingId, status])
+  @@index([athleteId])
+  @@index([status])
+  @@map("absence_notices")
 }

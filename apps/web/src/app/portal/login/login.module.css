@@ -1,0 +1,107 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--background) 0%, #e2e8f0 100%);
+    padding: 1rem;
+}
+
+[data-theme='dark'] .container {
+    background: linear-gradient(135deg, var(--background) 0%, #0f172a 100%);
+}
+
+.card {
+    background-color: var(--surface);
+    padding: 2.5rem;
+    border-radius: 24px;
+    box-shadow: var(--shadow-lg);
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.header {
+    text-align: center;
+}
+
+.title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.errorAlert {
+    background-color: #fef2f2;
+    border: 1px solid #fee2e2;
+    color: #ef4444;
+    padding: 0.75rem;
+    border-radius: var(--border-radius);
+    font-size: 0.875rem;
+    text-align: center;
+}
+
+.passwordWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.forgotLink {
+    align-self: flex-end;
+    font-size: 0.8rem;
+    color: var(--primary);
+    font-weight: 500;
+    opacity: 0.8;
+}
+
+.forgotLink:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.footer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.registerLink {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.registerLink:hover {
+    text-decoration: underline;
+}

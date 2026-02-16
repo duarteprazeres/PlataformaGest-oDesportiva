@@ -1,0 +1,102 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.25rem;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+}
+
+.grid {
+    display: grid;
+    grid-templateColumns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.loading,
+.emptyState {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+    background-color: var(--surface);
+    border-radius: 16px;
+    border: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+/* Create Form Styles */
+.createForm {
+    background-color: var(--surface);
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    animation: slideDown 0.3s ease-out;
+    border-left: 4px solid var(--secondary);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.formTitle {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    color: var(--primary);
+}
+
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    align-items: end;
+}
+
+.selectGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.selectGroup label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.select {
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius);
+    border: 1px solid #e2e8f0;
+    background-color: var(--background);
+    color: var(--text-main);
+    font-size: 1rem;
+    outline: none;
+    width: 100%;
+}
+
+.select:focus {
+    border-color: var(--primary);
+}
