@@ -27,6 +27,8 @@
     "db:setup": "docker-compose up -d postgres redis && sleep 5 && npm run prisma:migrate",
     "db:seed": "npm run prisma:seed",
     "db:reset": "sh scripts/db-reset.sh",
+    "db:backup": "sh scripts/backup_db.sh",
+    "db:restore": "sh scripts/restore_db.sh",
     "docker:up": "docker compose up -d",
     "docker:down": "docker compose down",
     "docker:logs": "docker compose logs -f",

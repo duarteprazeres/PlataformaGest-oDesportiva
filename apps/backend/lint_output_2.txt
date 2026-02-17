@@ -1,0 +1,487 @@
+
+> sports-management-backend@1.0.0 lint
+> eslint "{src,apps,libs,test}/**/*.ts" --fix
+
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/app.module.ts
+  80:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  80:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/common/decorators/roles.decorator.ts
+  5:45  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  5:45  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/common/filters/http-exception.filter.ts
+  9:3  warning  Missing return type on function                                @typescript-eslint/explicit-module-boundary-types
+  9:3  warning  Method 'catch' has too many lines (51). Maximum allowed is 50  max-lines-per-function
+  9:3  warning  Missing return type on function                                @typescript-eslint/explicit-function-return-type
+  9:8  warning  Method 'catch' has a complexity of 12. Maximum allowed is 10   complexity
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/common/guards/roles.guard.spec.ts
+  43:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  50:8   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/common/storage/storage.config.ts
+  13:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  13:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/config/configuration.ts
+  1:19  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  1:19  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/database/prisma.service.ts
+   6:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   6:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  10:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  10:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/logger.middleware.ts
+  8:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  8:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/main.ts
+  15:1  warning  Missing return type on function                                            @typescript-eslint/explicit-function-return-type
+  15:1  warning  Async function 'bootstrap' has too many lines (67). Maximum allowed is 50  max-lines-per-function
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/absence-notices/absence-notices.controller.ts
+   47:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   47:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   58:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   58:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   70:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   70:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   82:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   82:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   92:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   92:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  105:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  105:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/absence-notices/absence-notices.service.ts
+   16:3   warning  Missing return type on function                                        @typescript-eslint/explicit-module-boundary-types
+   16:3   warning  Async method 'create' has too many lines (65). Maximum allowed is 50   max-lines-per-function
+   16:3   warning  Missing return type on function                                        @typescript-eslint/explicit-function-return-type
+   16:15  warning  Async method 'create' has a complexity of 14. Maximum allowed is 10    complexity
+   90:7   warning  Unexpected console statement                                           no-console
+   97:3   warning  Missing return type on function                                        @typescript-eslint/explicit-module-boundary-types
+   97:3   warning  Missing return type on function                                        @typescript-eslint/explicit-function-return-type
+  108:3   warning  Missing return type on function                                        @typescript-eslint/explicit-module-boundary-types
+  108:3   warning  Missing return type on function                                        @typescript-eslint/explicit-function-return-type
+  122:3   warning  Missing return type on function                                        @typescript-eslint/explicit-module-boundary-types
+  122:3   warning  Async method 'approve' has too many lines (64). Maximum allowed is 50  max-lines-per-function
+  122:3   warning  Missing return type on function                                        @typescript-eslint/explicit-function-return-type
+  132:37  warning  Async arrow function has too many lines (55). Maximum allowed is 50    max-lines-per-function
+  199:3   warning  Missing return type on function                                        @typescript-eslint/explicit-module-boundary-types
+  199:3   warning  Missing return type on function                                        @typescript-eslint/explicit-function-return-type
+  211:3   warning  Missing return type on function                                        @typescript-eslint/explicit-module-boundary-types
+  211:3   warning  Missing return type on function                                        @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/athletes/athletes.controller.ts
+   36:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   36:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   42:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   42:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   49:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   49:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   57:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   57:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   64:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   64:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   71:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   71:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   76:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   76:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   81:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   81:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   86:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   86:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   93:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   93:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  101:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  101:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  118:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  118:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/athletes/athletes.service.ts
+   33:3  warning  Missing return type on function                                                @typescript-eslint/explicit-module-boundary-types
+   33:3  warning  Missing return type on function                                                @typescript-eslint/explicit-function-return-type
+   51:3  warning  Missing return type on function                                                @typescript-eslint/explicit-module-boundary-types
+   51:3  warning  Missing return type on function                                                @typescript-eslint/explicit-function-return-type
+   80:3  warning  Missing return type on function                                                @typescript-eslint/explicit-module-boundary-types
+   80:3  warning  Missing return type on function                                                @typescript-eslint/explicit-function-return-type
+   96:3  warning  Missing return type on function                                                @typescript-eslint/explicit-module-boundary-types
+   96:3  warning  Missing return type on function                                                @typescript-eslint/explicit-function-return-type
+  133:3  warning  Missing return type on function                                                @typescript-eslint/explicit-module-boundary-types
+  133:3  warning  Missing return type on function                                                @typescript-eslint/explicit-function-return-type
+  228:3  warning  Missing return type on function                                                @typescript-eslint/explicit-module-boundary-types
+  228:3  warning  Missing return type on function                                                @typescript-eslint/explicit-function-return-type
+  241:3  warning  Missing return type on function                                                @typescript-eslint/explicit-module-boundary-types
+  241:3  warning  Missing return type on function                                                @typescript-eslint/explicit-function-return-type
+  301:3  warning  Missing return type on function                                                @typescript-eslint/explicit-module-boundary-types
+  301:3  warning  Missing return type on function                                                @typescript-eslint/explicit-function-return-type
+  355:3  warning  Missing return type on function                                                @typescript-eslint/explicit-module-boundary-types
+  355:3  warning  Async method 'getAthleteStats' has too many lines (60). Maximum allowed is 50  max-lines-per-function
+  355:3  warning  Missing return type on function                                                @typescript-eslint/explicit-function-return-type
+  427:3  warning  Missing return type on function                                                @typescript-eslint/explicit-module-boundary-types
+  427:3  warning  Missing return type on function                                                @typescript-eslint/explicit-function-return-type
+  459:3  warning  Missing return type on function                                                @typescript-eslint/explicit-module-boundary-types
+  459:3  warning  Missing return type on function                                                @typescript-eslint/explicit-function-return-type
+  513:3  warning  Missing return type on function                                                @typescript-eslint/explicit-module-boundary-types
+  513:3  warning  Missing return type on function                                                @typescript-eslint/explicit-function-return-type
+  543:3  warning  Missing return type on function                                                @typescript-eslint/explicit-module-boundary-types
+  543:3  warning  Missing return type on function                                                @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/auth/auth.controller.ts
+  29:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  29:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  52:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  52:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  63:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  63:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/auth/auth.service.spec.ts
+    9:25  warning  Arrow function has too many lines (110). Maximum allowed is 50  max-lines-per-function
+   14:19  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+  108:28  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+  128:42  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/auth/auth.service.ts
+  48:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  48:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/auth/jwt.strategy.ts
+  18:24  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  32:3   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  32:3   warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/auth/local.strategy.ts
+  12:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/clubs/clubs.controller.ts
+  17:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  17:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  27:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  27:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/clubs/clubs.service.spec.ts
+  13:26  warning  Arrow function has too many lines (119). Maximum allowed is 50  max-lines-per-function
+  16:28  error    Unexpected any. Specify a different type                        @typescript-eslint/no-explicit-any
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/clubs/clubs.service.ts
+  36:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  36:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/global-auth/global-auth.controller.ts
+   9:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   9:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  17:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  17:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/global-auth/global-auth.service.ts
+  13:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  13:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  37:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  37:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  49:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/health/health.controller.ts
+  21:3   warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  21:3   warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  24:10  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  26:10  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  28:10  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/injuries/injuries.controller.ts
+  24:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  24:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  29:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  29:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  38:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  38:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  43:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  43:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/injuries/injuries.service.ts
+  10:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+  10:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+  35:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+  35:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+  36:18  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  56:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+  56:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+  68:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+  68:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/jobs/withdrawal.processor.ts
+  11:3   warning  Async method 'handlePendingWithdrawals' has too many lines (64). Maximum allowed is 50  max-lines-per-function
+  12:3   warning  Missing return type on function                                                         @typescript-eslint/explicit-module-boundary-types
+  12:3   warning  Missing return type on function                                                         @typescript-eslint/explicit-function-return-type
+  81:23  error    Unexpected any. Specify a different type                                                @typescript-eslint/no-explicit-any
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/mail/mail.service.ts
+  10:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+  10:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+  16:35  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  38:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+  38:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/matches/matches.controller.ts
+   41:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   41:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   49:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   49:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   58:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   58:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   67:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   67:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   79:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   79:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   90:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   90:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  102:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  102:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  111:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  111:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  125:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  125:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  139:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  139:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/matches/matches.service.ts
+   12:3  warning  Missing return type on function                                              @typescript-eslint/explicit-module-boundary-types
+   12:3  warning  Missing return type on function                                              @typescript-eslint/explicit-function-return-type
+   57:3  warning  Missing return type on function                                              @typescript-eslint/explicit-module-boundary-types
+   57:3  warning  Missing return type on function                                              @typescript-eslint/explicit-function-return-type
+   77:3  warning  Missing return type on function                                              @typescript-eslint/explicit-module-boundary-types
+   77:3  warning  Missing return type on function                                              @typescript-eslint/explicit-function-return-type
+  102:3  warning  Missing return type on function                                              @typescript-eslint/explicit-module-boundary-types
+  102:3  warning  Missing return type on function                                              @typescript-eslint/explicit-function-return-type
+  124:3  warning  Missing return type on function                                              @typescript-eslint/explicit-module-boundary-types
+  124:3  warning  Missing return type on function                                              @typescript-eslint/explicit-function-return-type
+  133:3  warning  Missing return type on function                                              @typescript-eslint/explicit-module-boundary-types
+  133:3  warning  Missing return type on function                                              @typescript-eslint/explicit-function-return-type
+  176:3  warning  Missing return type on function                                              @typescript-eslint/explicit-module-boundary-types
+  176:3  warning  Missing return type on function                                              @typescript-eslint/explicit-function-return-type
+  212:3  warning  Missing return type on function                                              @typescript-eslint/explicit-module-boundary-types
+  212:3  warning  Missing return type on function                                              @typescript-eslint/explicit-function-return-type
+  260:3  warning  Missing return type on function                                              @typescript-eslint/explicit-module-boundary-types
+  260:3  warning  Async method 'finalizeMatch' has too many lines (64). Maximum allowed is 50  max-lines-per-function
+  260:3  warning  Missing return type on function                                              @typescript-eslint/explicit-function-return-type
+  341:3  warning  Missing return type on function                                              @typescript-eslint/explicit-module-boundary-types
+  341:3  warning  Missing return type on function                                              @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/metrics/metrics.service.ts
+  12:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  12:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  16:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  16:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/notifications/notifications.controller.ts
+  12:3   warning  Missing return type on function                       @typescript-eslint/explicit-module-boundary-types
+  12:3   warning  Missing return type on function                       @typescript-eslint/explicit-function-return-type
+  12:53  warning  Argument 'query' should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
+  12:60  error    Unexpected any. Specify a different type              @typescript-eslint/no-explicit-any
+  21:3   warning  Missing return type on function                       @typescript-eslint/explicit-module-boundary-types
+  21:3   warning  Missing return type on function                       @typescript-eslint/explicit-function-return-type
+  26:3   warning  Missing return type on function                       @typescript-eslint/explicit-module-boundary-types
+  26:3   warning  Missing return type on function                       @typescript-eslint/explicit-function-return-type
+  31:3   warning  Missing return type on function                       @typescript-eslint/explicit-module-boundary-types
+  31:3   warning  Missing return type on function                       @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/notifications/notifications.service.ts
+   8:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+   8:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+  26:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+  26:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+  32:18  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  57:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+  57:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+  67:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+  67:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+  86:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+  86:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/payments/payments.controller.ts
+  30:3   warning  Missing return type on function                     @typescript-eslint/explicit-module-boundary-types
+  30:3   warning  Missing return type on function                     @typescript-eslint/explicit-function-return-type
+  30:65  warning  Argument 'req' should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
+  30:70  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  38:3   warning  Missing return type on function                     @typescript-eslint/explicit-module-boundary-types
+  38:3   warning  Missing return type on function                     @typescript-eslint/explicit-function-return-type
+  38:22  warning  Argument 'req' should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
+  38:27  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  47:3   warning  Missing return type on function                     @typescript-eslint/explicit-module-boundary-types
+  47:3   warning  Missing return type on function                     @typescript-eslint/explicit-function-return-type
+  47:47  warning  Argument 'req' should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
+  47:52  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  56:3   warning  Missing return type on function                     @typescript-eslint/explicit-module-boundary-types
+  56:3   warning  Missing return type on function                     @typescript-eslint/explicit-function-return-type
+  56:90  warning  Argument 'req' should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
+  56:95  error    Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/payments/payments.service.spec.ts
+    7:29  warning  Arrow function has too many lines (266). Maximum allowed is 50  max-lines-per-function
+  151:22  warning  Arrow function has too many lines (59). Maximum allowed is 50   max-lines-per-function
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/payments/payments.service.ts
+   16:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   16:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   51:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   51:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   58:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   58:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   74:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   74:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  115:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  115:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  128:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  128:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  145:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  145:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/players/players.controller.ts
+  29:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  29:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  37:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  37:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  46:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  46:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/players/players.service.spec.ts
+  10:28  warning  Arrow function has too many lines (140). Maximum allowed is 50  max-lines-per-function
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/players/players.service.ts
+  16:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+  16:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+  44:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+  44:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+  45:24  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  62:3   warning  Missing return type on function           @typescript-eslint/explicit-module-boundary-types
+  62:3   warning  Missing return type on function           @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/seasons/seasons.controller.ts
+  13:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  13:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  18:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  18:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  23:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  23:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  28:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  28:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  33:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  33:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/seasons/seasons.service.ts
+   9:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   9:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  21:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  21:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  28:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  28:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  34:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  34:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  40:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  40:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/teams/teams.controller.ts
+  33:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  33:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  41:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  41:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  50:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  50:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/teams/teams.service.ts
+  16:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  16:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  25:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  25:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  43:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  43:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/trainings/trainings.controller.ts
+   64:3   warning  Missing return type on function                                   @typescript-eslint/explicit-module-boundary-types
+   64:3   warning  Missing return type on function                                   @typescript-eslint/explicit-function-return-type
+   82:3   warning  Missing return type on function                                   @typescript-eslint/explicit-module-boundary-types
+   82:3   warning  Missing return type on function                                   @typescript-eslint/explicit-function-return-type
+   95:3   warning  Missing return type on function                                   @typescript-eslint/explicit-module-boundary-types
+   95:3   warning  Missing return type on function                                   @typescript-eslint/explicit-function-return-type
+  117:3   warning  Missing return type on function                                   @typescript-eslint/explicit-module-boundary-types
+  117:3   warning  Missing return type on function                                   @typescript-eslint/explicit-function-return-type
+  120:13  warning  Argument 'updateTrainingDto' should be typed with a non-any type  @typescript-eslint/explicit-module-boundary-types
+  120:32  error    Unexpected any. Specify a different type                          @typescript-eslint/no-explicit-any
+  132:3   warning  Missing return type on function                                   @typescript-eslint/explicit-module-boundary-types
+  132:3   warning  Missing return type on function                                   @typescript-eslint/explicit-function-return-type
+  151:3   warning  Missing return type on function                                   @typescript-eslint/explicit-module-boundary-types
+  151:3   warning  Missing return type on function                                   @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/trainings/trainings.service.spec.ts
+  7:30  warning  Arrow function has too many lines (223). Maximum allowed is 50  max-lines-per-function
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/trainings/trainings.service.ts
+   10:3   warning  Missing return type on function                                               @typescript-eslint/explicit-module-boundary-types
+   10:3   warning  Missing return type on function                                               @typescript-eslint/explicit-function-return-type
+   68:3   warning  Missing return type on function                                               @typescript-eslint/explicit-module-boundary-types
+   68:3   warning  Missing return type on function                                               @typescript-eslint/explicit-function-return-type
+   71:18  error    Unexpected any. Specify a different type                                      @typescript-eslint/no-explicit-any
+  113:3   warning  Missing return type on function                                               @typescript-eslint/explicit-module-boundary-types
+  113:3   warning  Missing return type on function                                               @typescript-eslint/explicit-function-return-type
+  157:3   warning  Missing return type on function                                               @typescript-eslint/explicit-module-boundary-types
+  157:3   warning  Missing return type on function                                               @typescript-eslint/explicit-function-return-type
+  157:44  warning  Argument 'updateTrainingDto' should be typed with a non-any type              @typescript-eslint/explicit-module-boundary-types
+  157:63  error    Unexpected any. Specify a different type                                      @typescript-eslint/no-explicit-any
+  160:17  error    Unexpected any. Specify a different type                                      @typescript-eslint/no-explicit-any
+  184:3   warning  Missing return type on function                                               @typescript-eslint/explicit-module-boundary-types
+  184:3   warning  Async method 'markAttendance' has too many lines (85). Maximum allowed is 50  max-lines-per-function
+  184:3   warning  Missing return type on function                                               @typescript-eslint/explicit-function-return-type
+  289:3   warning  Missing return type on function                                               @typescript-eslint/explicit-module-boundary-types
+  289:3   warning  Missing return type on function                                               @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/users/users.controller.ts
+   43:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   43:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   54:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   54:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   73:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   73:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   84:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   84:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+   94:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+   94:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+  102:3  warning  Missing return type on function  @typescript-eslint/explicit-module-boundary-types
+  102:3  warning  Missing return type on function  @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/src/modules/users/users.service.ts
+  16:3   warning  Missing return type on function                    @typescript-eslint/explicit-module-boundary-types
+  16:3   warning  Missing return type on function                    @typescript-eslint/explicit-function-return-type
+  22:3   warning  Missing return type on function                    @typescript-eslint/explicit-module-boundary-types
+  22:3   warning  Missing return type on function                    @typescript-eslint/explicit-function-return-type
+  40:3   warning  Missing return type on function                    @typescript-eslint/explicit-module-boundary-types
+  40:3   warning  Missing return type on function                    @typescript-eslint/explicit-function-return-type
+  53:3   warning  Missing return type on function                    @typescript-eslint/explicit-module-boundary-types
+  53:3   warning  Missing return type on function                    @typescript-eslint/explicit-function-return-type
+  59:15  error    'passwordHash' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  59:53  error    Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  75:3   warning  Missing return type on function                    @typescript-eslint/explicit-module-boundary-types
+  75:3   warning  Missing return type on function                    @typescript-eslint/explicit-function-return-type
+  89:3   warning  Missing return type on function                    @typescript-eslint/explicit-module-boundary-types
+  89:3   warning  Missing return type on function                    @typescript-eslint/explicit-function-return-type
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/test/e2e/cache.e2e-spec.ts
+  47:27  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  55:5   warning  Unexpected console statement              no-console
+
+/Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend/test/payments.e2e-spec.ts
+    7:38  warning  Arrow function has too many lines (92). Maximum allowed is 50  max-lines-per-function
+  109:39  error    Unexpected any. Specify a different type                       @typescript-eslint/no-explicit-any
+  109:55  error    Unexpected any. Specify a different type                       @typescript-eslint/no-explicit-any
+
+✖ 373 problems (26 errors, 347 warnings)
+
+npm error Lifecycle script `lint` failed with error:
+npm error code 1
+npm error path /Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend
+npm error workspace sports-management-backend@1.0.0
+npm error location /Users/duarteprazeres/Documents/GitHub/PlataformaGest-oDesportiva/apps/backend
+npm error command failed
+npm error command sh -c eslint "{src,apps,libs,test}/**/*.ts" --fix

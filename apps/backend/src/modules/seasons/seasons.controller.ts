@@ -7,30 +7,30 @@ import { RequestWithUser } from '../../common/interfaces/request-with-user.inter
 @Controller('seasons')
 @UseGuards(JwtAuthGuard)
 export class SeasonsController {
-    constructor(private readonly seasonsService: SeasonsService) { }
+  constructor(private readonly seasonsService: SeasonsService) {}
 
-    @Post()
-    create(@Request() req: RequestWithUser, @Body() createSeasonDto: CreateSeasonDto) {
-        return this.seasonsService.create(req.user.clubId, createSeasonDto);
-    }
+  @Post()
+  create(@Request() req: RequestWithUser, @Body() createSeasonDto: CreateSeasonDto) {
+    return this.seasonsService.create(req.user.clubId, createSeasonDto);
+  }
 
-    @Get()
-    findAll(@Request() req: RequestWithUser) {
-        return this.seasonsService.findAll(req.user.clubId);
-    }
+  @Get()
+  findAll(@Request() req: RequestWithUser) {
+    return this.seasonsService.findAll(req.user.clubId);
+  }
 
-    @Get('active')
-    findActive(@Request() req: RequestWithUser) {
-        return this.seasonsService.findActive(req.user.clubId);
-    }
+  @Get('active')
+  findActive(@Request() req: RequestWithUser) {
+    return this.seasonsService.findActive(req.user.clubId);
+  }
 
-    @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.seasonsService.findOne(id);
-    }
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.seasonsService.findOne(id);
+  }
 
-    @Patch(':id/toggle-active')
-    toggleActive(@Param('id') id: string) {
-        return this.seasonsService.toggleActive(id);
-    }
+  @Patch(':id/toggle-active')
+  toggleActive(@Param('id') id: string) {
+    return this.seasonsService.toggleActive(id);
+  }
 }

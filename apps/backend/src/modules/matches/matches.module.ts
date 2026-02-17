@@ -4,9 +4,9 @@ import { MatchesService } from './matches.service';
 import { DatabaseModule } from '../../database/database.module';
 
 @Module({
-    imports: [DatabaseModule],
-    controllers: [MatchesController],
-    providers: [MatchesService],
-    exports: [MatchesService],
+  imports: [DatabaseModule],
+  controllers: [MatchesController],
+  providers: [MatchesService],
+  exports: [MatchesService],
 })
-export class MatchesModule { }
+export class MatchesModule {}

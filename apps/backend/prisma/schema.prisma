@@ -2,7 +2,7 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["multiSchema"] // Para multi-tenancy avançado (opcional)
+
 }
 
 datasource db {
@@ -218,6 +218,9 @@ model User {
   reviewedNotices          AbsenceNotice[]      @relation("ReviewedNotices")
 
   @@unique([clubId, email])
+  @@index([clubId])
+  @@index([email])
+  @@index([role])
   @@map("users")
 }
 
@@ -277,6 +280,8 @@ model Team {
   playerTeamHistory PlayerTeamHistory[]
 
   @@unique([clubId, name, seasonId])
+  @@index([clubId])
+  @@index([seasonId])
   @@map("teams")
 }
 
@@ -355,6 +360,12 @@ model Player {
   absenceNotices     AbsenceNotice[]
 
   @@map("players")
+
+  @@index([clubId])
+  @@index([currentTeamId])
+  @@index([parentId])
+  @@index([status])
+  @@index([deletedAt])
 }
 
 enum PlayerStatus {
@@ -461,6 +472,12 @@ model Training {
   absenceNotices AbsenceNotice[]
 
   @@map("trainings")
+
+  @@index([clubId])
+  @@index([teamId])
+  @@index([coachId])
+  @@index([scheduledDate])
+  @@index([isFinalized])
 }
 
 model TrainingAttendance {
@@ -487,6 +504,10 @@ model TrainingAttendance {
   markedByUser User?    @relation(fields: [markedByUserId], references: [id])
 
   @@unique([trainingId, playerId])
+  @@index([clubId])
+  @@index([trainingId])
+  @@index([playerId])
+  @@index([status])
   @@map("training_attendance")
 }
 
@@ -520,6 +541,11 @@ model Match {
   callups MatchCallup[]
 
   @@map("matches")
+
+  @@index([clubId])
+  @@index([teamId])
+  @@index([matchDate])
+  @@index([result])
 }
 
 model MatchCallup {
@@ -606,6 +632,12 @@ model Payment {
   orders   Order[]
 
   @@map("payments")
+
+  @@index([clubId])
+  @@index([playerId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([createdAt])
 }
 
 model Invoice {

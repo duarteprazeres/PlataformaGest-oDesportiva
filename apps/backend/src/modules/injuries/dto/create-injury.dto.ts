@@ -2,19 +2,19 @@ import { IsEnum, IsString, IsOptional, IsUUID, IsDateString } from 'class-valida
 import { MedicalStatus } from '@prisma/client';
 
 export class CreateInjuryDto {
-    @IsUUID()
-    playerId!: string;
+  @IsUUID()
+  playerId!: string;
 
-    @IsEnum(MedicalStatus)
-    status!: MedicalStatus;
+  @IsEnum(MedicalStatus)
+  status!: MedicalStatus;
 
-    @IsString()
-    name!: string;
+  @IsString()
+  name!: string;
 
-    @IsOptional()
-    @IsString()
-    description?: string;
+  @IsOptional()
+  @IsString()
+  description?: string;
 
-    @IsDateString()
-    startDate!: string;
+  @IsDateString()
+  startDate!: string;
 }

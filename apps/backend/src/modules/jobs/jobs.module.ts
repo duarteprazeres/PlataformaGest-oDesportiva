@@ -4,10 +4,7 @@ import { DatabaseModule } from '../../database/database.module';
 import { WithdrawalProcessor } from './withdrawal.processor';
 
 @Module({
-    imports: [
-        ScheduleModule.forRoot(),
-        DatabaseModule,
-    ],
-    providers: [WithdrawalProcessor],
+  imports: [ScheduleModule.forRoot(), DatabaseModule],
+  providers: [WithdrawalProcessor],
 })
-export class JobsModule { }
+export class JobsModule {}

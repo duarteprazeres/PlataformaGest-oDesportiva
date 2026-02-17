@@ -18,10 +18,16 @@ module.exports = {
   ignorePatterns: ['.eslintrc.js'],
   rules: {
     '@typescript-eslint/interface-name-prefix': 'off',
-    '@typescript-eslint/explicit-function-return-type': 'off',
-    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'warn',
+    '@typescript-eslint/explicit-module-boundary-types': 'warn',
     '@typescript-eslint/no-explicit-any': 'error',
     'no-unused-vars': 'off',
     '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }],
+    'complexity': ['warn', 10],
+    'max-lines-per-function': ['warn', { 'max': 50, 'skipBlankLines': true, 'skipComments': true }],
+    'max-depth': ['warn', 4],
+    'no-console': 'warn',
+    'prefer-const': 'error',
+    'no-var': 'error',
   },
 };

@@ -1,31 +1,39 @@
 import { IsBoolean, IsNumber, IsOptional, IsString, Max, Min } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateCallupStatsDto {
-    @IsBoolean()
-    played!: boolean;
+  @ApiProperty({ example: true, description: 'Did the player play?' })
+  @IsBoolean()
+  played!: boolean;
 
-    @IsNumber()
-    @Min(0)
-    minutesPlayed!: number;
+  @ApiProperty({ example: 90, description: 'Minutes played' })
+  @IsNumber()
+  @Min(0)
+  minutesPlayed!: number;
 
-    @IsNumber()
-    @Min(0)
-    goalsScored!: number;
+  @ApiProperty({ example: 1, description: 'Goals scored' })
+  @IsNumber()
+  @Min(0)
+  goalsScored!: number;
 
-    @IsNumber()
-    @Min(0)
-    yellowCards!: number;
+  @ApiProperty({ example: 0, description: 'Yellow cards' })
+  @IsNumber()
+  @Min(0)
+  yellowCards!: number;
 
-    @IsBoolean()
-    redCard!: boolean;
+  @ApiProperty({ example: false, description: 'Red card?' })
+  @IsBoolean()
+  redCard!: boolean;
 
-    @IsNumber()
-    @IsOptional()
-    @Min(0)
-    @Max(10)
-    coachRating?: number; // 0-10
+  @ApiProperty({ example: 8, description: 'Coach rating (0-10)', required: false })
+  @IsNumber()
+  @IsOptional()
+  @Min(0)
+  @Max(10)
+  coachRating?: number; // 0-10
 
-    @IsString()
-    @IsOptional()
-    notes?: string;
+  @ApiProperty({ example: 'Great impact', description: 'Notes', required: false })
+  @IsString()
+  @IsOptional()
+  notes?: string;
 }

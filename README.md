@@ -1,90 +1,121 @@
-# 🏆 Sports Management SaaS
+# 🏆 NovaScore - Plataforma de Gestão Desportiva (SaaS)
 
-Multi-tenant platform for football club management.
+Uma plataforma multi-tenant robusta para gestão de clubes de futebol, focada na segurança, escalabilidade e conformidade com o RGPD.
 
-## 🚀 Quick Start
+## 🚀 Visão Geral Técnica
 
-### Prerequisites
+### Backend (`apps/backend`)
+- **Framework**: NestJS (v10+)
+- **Linguagem**: TypeScript (Strict Mode)
+- **Database**: PostgreSQL 16
+- **ORM**: Prisma
+- **Segurança**:
+  - JWT Authentication (Access + Refresh Tokens)
+  - RBAC (Role-Based Access Control)
+  - Rate Limiting (ThrottlerModule)
+  - Security Headers (Helmet)
+  - Input Validation (class-validator + strict whitelist)
+- **CI/CD**: GitHub Actions
+
+### Mobile (`apps/mobile`)
+- **Framework**: Flutter 3.16+
+- **Plataformas**: Android & iOS
+
+---
+
+## 🛠️ Configuração do Projeto
+
+### Pré-requisitos
 - Node.js 20+
 - Docker & Docker Compose
-- Flutter 3.16+ (for mobile app)
-- PostgreSQL 16+ (or use Docker)
+- PostgreSQL 16 (ou via Docker)
 
-### Installation
+### Instalação
 
-1. **Clone and setup**
+1. **Clonar o repositório**
+   ```bash
+   git clone <repo-url>
+   cd PlataformaGest-oDesportiva
+   npm install
+   ```
+
+2. **Configurar Variáveis de Ambiente**
+   ⚠️ **Crítico**: O sistema **não arranca** sem as variáveis de segurança configuradas.
+   
+   Copie o exemplo e preencha com valores seguros:
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Certifique-se de definir:
+   - `JWT_SECRET`: Uma string longa e aleatória.
+   - `DATABASE_URL`: Connection string do PostgreSQL.
+   - `RATE_LIMIT_TTL/MAX`: Configuração de throttling.
+
+3. **Iniciar Base de Dados (Docker)**
+   ```bash
+   npm run docker:up
+   ```
+
+4. **Setup da Base de Dados**
+   ```bash
+   npx prisma generate
+   npx prisma migrate dev
+   npm run db:seed  # Opcional: Popular com dados de teste
+   ```
+
+5. **Iniciar Backend**
+   ```bash
+   # Modo Desenvolvimento
+   npm run start:dev
+   
+   # Modo Produção
+   npm run build
+   npm run start:prod
+   ```
+
+---
+
+## ✅ Estado do Projeto
+
+### Fase de Estabilização (Concluída - Fev 2026)
+- **Type Safety**: `strict: true` ativado, `no-explicit-any` enforced.
+- **Segurança**: Rotação de segredos, proteção contra força bruta e headers HTTP seguros implementados.
+- **CI/CD**: Pipeline de testes e linting automatizado via GitHub Actions.
+
+### Funcionalidades Core
+- **Gestão de Clubes**: Multi-tenancy isolado.
+- **Atletas & Equipas**: Gestão completa de plantéis e escalões.
+- **Treinos**: Marcação de presenças, bloqueio de treinos e gestão de sanções.
+- **Rescisões (Modelo 2)**: Fluxo formal de saída de atletas com geração de documentação.
+
+---
+
+## 📚 Documentação Técnica
+
+Para detalhes aprofundados sobre a arquitetura, decisões técnicas e dívida técnica resolvida, consulte:
+- [CONTEXT.md](./CONTEXT.md): Resumo técnico e status atual.
+- [CONTEXT2.md](./CONTEXT2.md): Análise técnica detalhada e auditoria.
+
+---
+
+## 🧪 Testes
+
+O projeto possui uma suite de testes em expansão:
+
 ```bash
-git clone <your-repo-url>
-cd PlataformaGest-oDesportiva
-sh scripts/setup-project.sh
+# Testes Unitários
+npm run test
+
+# Testes E2E (Em breve)
+npm run test:e2e
+
+# Cobertura de Testes
+npm run test:cov
 ```
 
-2. **Setup environment**
-```bash
-cp .env.example .env
-# Edit .env with your configuration
-```
+---
 
-3. **Start infrastructure**
-```bash
-npm run docker:up
-```
+## 📄 Licença
 
-4. **Setup database**
-```bash
-npm run db:setup
-npm run db:seed
-```
-
-5. **Start backend**
-```bash
-npm run backend:dev
-```
-
-6. **Start mobile app**
-```bash
-npm run mobile:run:android
-# or
-npm run mobile:run:ios
-```
-
-## 📁 Project Structure
-```
-sports-management-saas/
-├── apps/
-│   ├── backend/         # NestJS API
-│   └── mobile/          # Flutter App
-├── database/
-│   └── schema/          # SQL schemas
-├── packages/            # Shared code
-└── scripts/             # Automation scripts
-```
-
-## 🗄️ Database
-
-- PostgreSQL 16 with multi-tenant architecture
-- Prisma ORM for type-safe database access
-- Run `npm run prisma:studio` to explore data
-
-## 📚 Documentation
-
-- API Documentation: http://localhost:3000/api/docs
-- Database Schema: [database/docs/](database/docs/)
-
-## 🧪 Testing
-```bash
-npm run test              # All tests
-npm run backend:test      # Backend tests
-npm run mobile:test       # Mobile tests
-```
-
-## 📦 Useful Commands
-```bash
-npm run prisma:studio     # Open Prisma Studio
-npm run docker:logs       # View Docker logs
-npm run db:reset          # Reset database
-```
-
-## 📄 License
-
-MIT
+Proprietário. Todos os direitos reservados.
