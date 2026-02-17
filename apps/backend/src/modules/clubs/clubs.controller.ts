@@ -7,7 +7,7 @@ import { ClubEntity } from './entities/club.entity';
 @ApiTags('clubs')
 @Controller('clubs')
 export class ClubsController {
-  constructor(private readonly clubsService: ClubsService) {}
+  constructor(private readonly clubsService: ClubsService) { }
 
   @Get('by-subdomain/:subdomain')
   @ApiOperation({ summary: 'Find club by subdomain' })
@@ -26,5 +26,17 @@ export class ClubsController {
   @ApiResponse({ status: 400, description: 'Invalid input' })
   async create(@Body() createClubDto: CreateClubDto) {
     return this.clubsService.create(createClubDto);
+  }
+
+  // TODO: Secure this endpoint with appropriate guards
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Post(':id/subscription')
+  @ApiOperation({ summary: 'Update club subscription plan' })
+  @ApiParam({ name: 'id', description: 'Club ID' })
+  @ApiBody({ schema: { type: 'object', properties: { plan: { type: 'string' } } } })
+  @ApiResponse({ status: 200, description: 'Subscription updated successfully', type: ClubEntity })
+  @ApiResponse({ status: 400, description: 'Invalid plan or limits exceeded' })
+  async updateSubscription(@Param('id') id: string, @Body('plan') plan: string) {
+    return this.clubsService.updateSubscription(id, plan);
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException, Inject } from '@nestjs/common';
+import { Injectable, Inject, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { MetricsService } from '../metrics/metrics.service';
@@ -11,7 +11,42 @@ export class ClubsService {
     private prisma: PrismaService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private metricsService: MetricsService,
-  ) {}
+  ) { }
+
+  private readonly PLAN_LIMITS: Record<string, { players: number; teams: number }> = {
+    FREE: { players: 20, teams: 1 },
+    BASIC: { players: 60, teams: 3 },
+    PRO: { players: Infinity, teams: Infinity },
+  };
+
+  async updateSubscription(clubId: string, newPlan: string) {
+    const limits = this.PLAN_LIMITS[newPlan];
+    if (!limits) {
+      throw new BadRequestException('Invalid subscription plan');
+    }
+
+    // Check usage
+    if (limits.players !== Infinity || limits.teams !== Infinity) {
+      const playerCount = await this.prisma.player.count({ where: { clubId } });
+      const teamCount = await this.prisma.team.count({ where: { clubId } });
+
+      if (playerCount > limits.players) {
+        throw new BadRequestException(
+          `Cannot downgrade to ${newPlan}. Current players (${playerCount}) exceeds limit (${limits.players})`,
+        );
+      }
+      if (teamCount > limits.teams) {
+        throw new BadRequestException(
+          `Cannot downgrade to ${newPlan}. Current teams (${teamCount}) exceeds limit (${limits.teams})`,
+        );
+      }
+    }
+
+    return this.prisma.club.update({
+      where: { id: clubId },
+      data: { subscriptionPlan: newPlan },
+    });
+  }
 
   async findBySubdomain(subdomain: string): Promise<Club> {
     const cacheKey = `club:subdomain:${subdomain}`;
@@ -93,5 +128,16 @@ export class ClubsService {
 
       return { club, admin: { id: user.id, email: user.email } };
     });
+  }
+
+  async remove(id: string): Promise<void> {
+    const now = new Date();
+    await this.prisma.$transaction([
+      this.prisma.club.update({ where: { id }, data: { deletedAt: now } }),
+      this.prisma.user.updateMany({ where: { clubId: id }, data: { deletedAt: now } }),
+      this.prisma.player.updateMany({ where: { clubId: id }, data: { deletedAt: now } }),
+      this.prisma.payment.updateMany({ where: { clubId: id }, data: { deletedAt: now } }),
+      this.prisma.team.updateMany({ where: { clubId: id }, data: { deletedAt: now } }),
+    ]);
   }
 }

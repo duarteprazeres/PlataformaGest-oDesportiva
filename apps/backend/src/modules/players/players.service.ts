@@ -6,13 +6,16 @@ import { PrismaService } from '../../database/prisma.service';
 import { Prisma } from '@prisma/client';
 import { CreatePlayerDto } from './dto/create-player.dto';
 
+import { MailService } from '../mail/mail.service';
+
 @Injectable()
 export class PlayersService {
   constructor(
     private prisma: PrismaService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private metricsService: MetricsService,
-  ) {}
+    private mailService: MailService,
+  ) { }
 
   async create(clubId: string, data: CreatePlayerDto) {
     // 1. Verify Parent exists and belongs to club
@@ -37,6 +40,7 @@ export class PlayersService {
     return this.prisma.player.create({
       data: {
         ...data,
+        birthDate: new Date(data.birthDate),
         clubId,
       },
     });
@@ -62,7 +66,7 @@ export class PlayersService {
 
   async findOne(clubId: string, id: string) {
     const cacheKey = `player:${clubId}:${id}`;
-    const cached = await this.cacheManager.get(cacheKey);
+    const cached = await this.cacheManager.get<Prisma.PlayerGetPayload<{}>>(cacheKey);
     if (cached) {
       this.metricsService.incrementCacheHit('PlayersService.findOne');
       return cached;
@@ -83,5 +87,57 @@ export class PlayersService {
 
     await this.cacheManager.set(cacheKey, player, 900000); // 15 min
     return player;
+  }
+
+  async terminateLink(
+    clubId: string,
+    playerId: string,
+    data: {
+      reason: string;
+      destinationEmail?: string;
+      letterUrl?: string;
+      sendEmail?: boolean;
+    },
+  ) {
+    const player = await this.findOne(clubId, playerId);
+
+    if (player.status === 'LEFT') {
+      throw new BadRequestException('Player already withdrawn');
+    }
+
+    // Prepare update data
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const updateData: any = {
+      status: 'LEFT',
+      withdrawalReason: data.reason,
+      destinationClubEmail: data.destinationEmail,
+      withdrawalLetterUrl: data.letterUrl,
+      currentTeamId: null,
+      athleteId: null, // Free passport
+      withdrawalRequestedAt: new Date(),
+    };
+
+    if (data.sendEmail && data.destinationEmail && data.letterUrl) {
+      // Send email
+      const club = await this.prisma.club.findUnique({ where: { id: clubId } });
+      await this.mailService.sendWithdrawalPackage(
+        data.destinationEmail,
+        `${player.firstName} ${player.lastName}`,
+        club?.name || 'Clube',
+        [{ filename: 'Carta_Rescisao.pdf', content: data.letterUrl }],
+      );
+      updateData.documentsSentAt = new Date();
+    }
+
+    const updated = await this.prisma.player.update({
+      where: { id: playerId },
+      data: updateData,
+    });
+
+    // Invalidate cache
+    const cacheKey = `player:${clubId}:${playerId}`;
+    await this.cacheManager.del(cacheKey);
+
+    return updated;
   }
 }

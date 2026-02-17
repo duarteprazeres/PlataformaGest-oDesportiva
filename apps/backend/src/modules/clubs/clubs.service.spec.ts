@@ -159,4 +159,45 @@ describe('ClubsService', () => {
       });
     });
   });
+
+  describe('remove', () => {
+    it('should soft delete club and related entities', async () => {
+      const clubId = 'club-1';
+      // Mock transaction execution
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      mockPrismaService.$transaction.mockImplementation(async (arg: any) => {
+        if (typeof arg === 'function') {
+          return arg(mockPrismaService);
+        }
+        return Promise.all(arg);
+      });
+
+      // Add updateMany mocks
+      mockPrismaService.user.updateMany = jest.fn();
+      mockPrismaService.player = { ...mockPrismaService.player, updateMany: jest.fn() };
+      mockPrismaService.club.update = jest.fn();
+      // Mock payment if needed, though it wasn't in original mockPrismaService
+      mockPrismaService.payment = { updateMany: jest.fn() };
+      mockPrismaService.team = { updateMany: jest.fn() };
+
+      await service.remove(clubId);
+
+      expect(mockPrismaService.club.update).toHaveBeenCalledWith({
+        where: { id: clubId },
+        data: { deletedAt: expect.any(Date) },
+      });
+      expect(mockPrismaService.user.updateMany).toHaveBeenCalledWith({
+        where: { clubId },
+        data: { deletedAt: expect.any(Date) },
+      });
+      expect(mockPrismaService.player.updateMany).toHaveBeenCalledWith({
+        where: { clubId },
+        data: { deletedAt: expect.any(Date) },
+      });
+      expect(mockPrismaService.payment.updateMany).toHaveBeenCalledWith({
+        where: { clubId },
+        data: { deletedAt: expect.any(Date) },
+      });
+    });
+  });
 });
