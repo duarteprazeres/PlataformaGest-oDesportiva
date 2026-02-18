@@ -55,5 +55,6 @@ WORKDIR /app/apps/backend
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node dist/src/main"]
-
+COPY start.sh ./start.sh
+RUN chmod +x ./start.sh
+CMD ["sh", "start.sh"]
