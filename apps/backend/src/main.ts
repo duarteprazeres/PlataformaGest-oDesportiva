@@ -74,6 +74,8 @@ async function bootstrap() {
     credentials: true,
   });
 
+  app.use(cookieParser());
+
 
   // Swagger Configuration
   const config = new DocumentBuilder()

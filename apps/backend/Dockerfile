@@ -36,9 +36,6 @@ RUN npm install --workspace=apps/backend --omit=dev --legacy-peer-deps
 
 COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
 COPY --from=builder /app/apps/backend/prisma ./apps/backend/prisma
-COPY --from=builder /app/node_modules ./node_modules
-
-RUN cd /app/apps/backend && npx prisma generate
 
 WORKDIR /app/apps/backend
 
