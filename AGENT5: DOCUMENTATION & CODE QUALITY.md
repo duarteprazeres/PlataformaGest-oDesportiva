@@ -579,6 +579,13 @@ API profissional, bem documentada e código limpo!
 
 ### 🚀 Próximos Passos Sugeridos
 
-1.  **Testes de Integração**: Com a API estável e documentada, focar em aumentar a cobertura de testes de integração (AGENT4: TESTING - FEATURES).
-2.  **Infraestrutura**: Preparar deployment e CI/CD pipelines (AGENT1: INFRASTRUCTURE & DEVOPS).
-3.  **Performance Tuning**: Analisar queries do banco de dados e otimizar endpoints críticos (AGENT2: DATABASE & PERFORMANCE).
+1.  **Testes de Integração**:
+    *   ✅ Cobertura significativa alcançada em Players e Trainings (Ver AGENT4).
+    *   Continuar expansão para E2E em fluxos financeiros.
+
+2.  **Infraestrutura**:
+    *   ✅ CI/CD Pipeline implementado com GitHub Actions (Ver AGENT1).
+    *   Configurar environments de staging/prod.
+
+3.  **Performance Tuning**:
+    *   Analisar queries do banco de dados e otimizar endpoints críticos (AGENT2: DATABASE & PERFORMANCE).

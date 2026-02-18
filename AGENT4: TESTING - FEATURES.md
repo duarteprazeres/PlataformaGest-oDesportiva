@@ -364,36 +364,38 @@ describe('markAttendance', () => {
 
 - [x] TODO 4.1: Players Module Tests
   - [x] players.service.spec.ts (85%+ coverage)
-  - [ ] players.controller.spec.ts (Pendente)
+  - [x] players.controller.spec.ts (Implementado)
   - [x] Todos os casos críticos testados
   - [x] Multi-tenant isolation verificado
-  - [ ] Soft delete testado (Parcialmente via findOne)
-  - [ ] Withdrawal process testado
+  - [x] Soft delete testado (Verificado em teste dedicado)
+  - [x] Withdrawal process testado (Implementado em `withdrawal.service.spec.ts`)
   
 - [x] TODO 4.4: Training Module Tests
   - [x] trainings.service.spec.ts (90%+ coverage)
-  - [ ] trainings.controller.spec.ts (Pendente)
+  - [x] trainings.controller.spec.ts (Implementado)
   - [x] Finalize logic testado
   - [x] Cannot modify finalized testado
   - [x] Attendance marking testado
   - [x] Absence notices integration testado
 
+- [x] TODO 4.5: Subscription Management Tests (NOVO)
+  - [x] Enforce plan limits (Players/Teams)
+  - [x] Upgrade/Downgrade logic
+  - [x] `subscription.service.spec.ts` criado
+
 ---
 
 ## 🚀 PRÓXIMOS PASSOS SUGERIDOS
 
-1. **Controller Tests**: 
-   - Implementar `players.controller.spec.ts` e `trainings.controller.spec.ts` para garantir que os DTOs e Guards estão a ser aplicados corretamente na camada HTTP.
+1.  **E2E Tests Expansion**:
+    *   Expandir cobertura E2E para outros fluxos críticos como Gestão de Pagamentos completos e Torneios.
 
-2. **Withdrawal Process Tests**:
-   - O processo de "Rescisão" (Withdrawal) no PlayersService é complexo e envolve envio de emails. Merece testes específicos com mocks do `MailerService`.
+2.  **Soft Delete Edge Cases**:
+    *   Continuar a monitorizar se `deletedAt` é respeitado em todas as novas queries.
 
-3. **Soft Delete Edge Cases**:
-   - Reforçar testes de `soft delete` para garantir que `deletedAt` é respeitado em TODAS as queries de listagem.
-
-4. **Expandir para Outros Módulos**:
-   - `ClubsModule` (Critical for settings)
-   - `UsersModule` (Critical for RBAC)
+3.  **Expandir para Outros Módulos**:
+    *   `ClubsModule` (Critical for settings)
+    *   `UsersModule` (Critical for RBAC)
 
 ## ⚠️ AVISOS IMPORTANTES
 

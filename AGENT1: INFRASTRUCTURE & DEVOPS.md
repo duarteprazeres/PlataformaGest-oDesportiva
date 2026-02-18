@@ -300,6 +300,28 @@
 
 ---
 
+### ✅ TODO 6.1: Configurar GitHub Actions (CI/CD)
+
+**Objetivo**: Automatizar testes, linting e build em cada push/PR
+
+**Passos**:
+1. Criar workflow `.github/workflows/ci.yml`:
+   - Trigger em push/pull_request para main/develop
+   - Services: PostgreSQL, Redis (para testes E2E)
+   - Steps: Checkout, Install Node, Install Deps, Lint, Build, Unit Tests, E2E Tests
+
+2. Configurar Secrets no GitHub (se necessário para deploy futuro, para já env vars de teste são públicas/default)
+
+**Ficheiros a Criar**:
+- `.github/workflows/ci.yml`
+
+**Validação**:
+- Push de código dispara action
+- Pipeline passa com sucesso (Lint, Build, Tests)
+- Falha no pipeline impede merge (se configured branch protection)
+
+---
+
 ## 📊 CHECKLIST DE PROGRESSO
 
 - [x] TODO 1.1: Rate Limiting
@@ -312,6 +334,7 @@
 - [x] TODO 5.2: WAL Archiving (Documentação)
 - [x] TODO 5.3: Disaster Recovery Plan
 - [x] TODO 5.4: Environment Configuration
+- [x] TODO 6.1: GitHub Actions CI/CD Pipeline
 
 ---
 
@@ -343,16 +366,19 @@ Todas as tarefas planeadas foram concluídas com sucesso:
     *   Scripts de Backup e Restore criados (`npm run db:backup`).
     *   Documentação de WAL Archiving e Disaster Recovery criada.
 
+4.  **Automação (CI/CD)**:
+    *   Pipeline GitHub Actions configurado (`.github/workflows/ci.yml`).
+    *   Automated Linting, Building, Unit & E2E Testing com serviços integrados (Postgres/Redis).
+
 ---
 
 ## 🚀 PRÓXIMOS PASSOS (Sugestões)
 
 Para elevar a infraestrutura ao próximo nível, sugiro:
 
-1.  **CI/CD Pipelines (GitHub Actions)**:
-    *   Automatizar correr testes e linting em cada PR.
-    *   Automatizar build e push de imagem Docker para registry.
-    *   Automatizar deploy para staging/prod.
+1.  **Deployment Automatizado**:
+    *   Automatizar build e push de imagem Docker para registry (Docker Hub/GHCR).
+    *   Automatizar deploy para staging/prod (CD contínuo).
 
 2.  **Container Orchestration**:
     *   Preparar deployment para Kubernetes (K8s) ou ECS se a escala aumentar.

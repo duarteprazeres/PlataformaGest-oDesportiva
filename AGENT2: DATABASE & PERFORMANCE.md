@@ -270,8 +270,11 @@ Todas as tarefas planeadas foram concluídas com sucesso:
     *   Métricas Prometheus para `cache_hits_total` e `cache_misses_total`.
     *   Instrumentação adicionada aos serviços cacheados.
 
-4.  **Verificação**:
+4.  **Verificação & Integração**:
     *   Testes E2E (`cache.e2e-spec.ts`) criados e validados.
+    *   **Novas Features Validadas**:
+        *   `ClubsService` (Subscription) e `PlayersService` (Withdrawal) integrados com sucesso usando `CACHE_MANAGER`.
+        *   Soft deletes usam índices criados para performance.
 
 ---
 
