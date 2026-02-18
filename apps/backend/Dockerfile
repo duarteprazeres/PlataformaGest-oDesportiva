@@ -55,4 +55,8 @@ WORKDIR /app/apps/backend
 
 EXPOSE 3000
 
+# Força o downgrade do Prisma CLI para a versão correcta
+RUN npm install prisma@5.22.0 --save-dev --legacy-peer-deps
+
+
 CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node dist/src/main.js"]
