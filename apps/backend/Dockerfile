@@ -36,15 +36,9 @@ RUN npm install --workspace=apps/backend --omit=dev --legacy-peer-deps
 
 COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
 COPY --from=builder /app/apps/backend/prisma ./apps/backend/prisma
+COPY --from=builder /app/node_modules ./node_modules
 
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
-COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/client
-
-# Copia o binário prisma CLI correcto directamente do builder (versão 5.x)
-COPY --from=builder /app/node_modules/.bin/prisma ./node_modules/.bin/prisma
-COPY --from=builder /app/node_modules/prisma ./node_modules/prisma
-COPY --from=builder /app/node_modules/@prisma/engines ./node_modules/@prisma/engines
-
+RUN cd /app/apps/backend && npx prisma generate
 
 WORKDIR /app/apps/backend
 
