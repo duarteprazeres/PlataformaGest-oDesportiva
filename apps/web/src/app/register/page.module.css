@@ -331,3 +331,106 @@
 .loginLink a:hover {
     text-decoration: underline;
 }
+
+/* ── Step 2: row ── */
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--input-bg);
+    color: var(--foreground);
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+/* ── Step 3: plans ── */
+.plansGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 8px;
+}
+
+.planCard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: var(--card-bg);
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.planCard:hover {
+    border-color: var(--primary);
+}
+
+.planSelected {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+}
+
+.planHeader {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.planIcon {
+    color: var(--primary);
+}
+
+.planLabel {
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.planPrice {
+    font-size: 0.85rem;
+    color: var(--muted-foreground);
+}
+
+.planFeatures {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--muted-foreground);
+}
+
+.planFeatures li {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.planFeatures li svg {
+    color: var(--primary);
+    flex-shrink: 0;
+}
+
+.planBadge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--primary);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 99px;
+}
