@@ -17,7 +17,7 @@ interface RequestWithUser extends ExpressRequest {
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   @UseGuards(AuthGuard('local'))
   @Throttle({ default: { limit: 5, ttl: 60000 } })
@@ -34,12 +34,15 @@ export class AuthController {
     // We add LoginDto for validation pipeline, but the actual user is attached by LocalStrategy
     const { access_token, user } = await this.authService.login(req.user);
 
+    const isProduction = process.env.NODE_ENV === 'production';
+
     // Set HTTP-only cookie
     res.cookie('Authentication', access_token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', // true in prod
-      sameSite: 'strict',
+      secure: isProduction, // true in prod
+      sameSite: isProduction ? 'none' : 'lax', // 'none' for cross-site (railway), 'lax' for local
       path: '/',
+      domain: isProduction ? undefined : undefined, // Let browser handle domain for now to avoid complexity with public suffix
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     });
 

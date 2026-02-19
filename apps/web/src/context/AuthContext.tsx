@@ -16,7 +16,7 @@ interface User {
 interface AuthContextType {
     user: User | null;
     isLoading: boolean;
-    login: (credentials: any) => Promise<void>; // Credentials logic handled inside or passed
+    login: (credentials: any, redirectTo?: string) => Promise<void>;
     logout: () => Promise<void>;
 }
 
@@ -48,16 +48,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         checkSession();
     }, []);
 
-    const login = async (credentials: any) => {
-        // api request is handled by caller usually, but context can own it
-        // Let's optimize: Login Page calls API, then calls checkSession or setUser
-        // Ideally context handles it to keep state sync
+    const login = async (credentials: any, redirectTo: string = '/dashboard') => {
         await fetchApi('/auth/login', {
             method: 'POST',
             body: JSON.stringify(credentials),
         });
-        await checkSession();
-        router.push('/dashboard');
+        const data = await fetchApi('/auth/me');
+        if (data && data.user) {
+            setUser(data.user);
+            router.push(redirectTo);
+        }
     };
 
     const logout = async () => {

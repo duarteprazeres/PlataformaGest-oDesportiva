@@ -16,7 +16,7 @@ export class AuthService {
     private jwtService: JwtService,
     @Inject(CACHE_MANAGER) private cacheManager: Cache,
     private metricsService: MetricsService,
-  ) {}
+  ) { }
 
   async validateUser(email: string, pass: string): Promise<Omit<User, 'passwordHash'> | null> {
     const cacheKey = `user:email:${email}`;
@@ -31,8 +31,6 @@ export class AuthService {
     } else {
       this.metricsService.incrementCacheHit('AuthService.validateUser');
     }
-
-    // console.log(`Login attempt for ${email}. User found: ${!!user}`);
 
     if (user && user.passwordHash) {
       const isValid = await bcrypt.compare(pass, user.passwordHash);

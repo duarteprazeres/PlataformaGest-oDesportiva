@@ -42,4 +42,5 @@ WORKDIR /app/apps/backend
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy && node dist/src/main.js"]
+CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node dist/src/main.js"]
+
