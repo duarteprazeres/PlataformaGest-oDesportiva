@@ -23,91 +23,99 @@ async function bootstrap() {
     profilesSampleRate: 1.0,
   });
 
-  const app = await NestFactory.create(AppModule, {
-    logger: WinstonModule.createLogger({
-      transports: [
-        new winston.transports.Console({
-          format: winston.format.combine(
-            winston.format.timestamp(),
-            winston.format.ms(),
-            nestWinstonModuleUtilities.format.nestLike('MyApp', {
-              colors: true,
-              prettyPrint: true,
-            }),
-          ),
-        }),
-        new winston.transports.File({
-          filename: 'logs/error.log',
-          level: 'error',
-          format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
-        }),
-        new winston.transports.File({
-          filename: 'logs/combined.log',
-          format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
-        }),
+  try {
+    const app = await NestFactory.create(AppModule, {
+      logger: WinstonModule.createLogger({
+        transports: [
+          new winston.transports.Console({
+            format: winston.format.combine(
+              winston.format.timestamp(),
+              winston.format.ms(),
+              nestWinstonModuleUtilities.format.nestLike('MyApp', {
+                colors: true,
+                prettyPrint: true,
+              }),
+            ),
+          }),
+          new winston.transports.File({
+            filename: 'logs/error.log',
+            level: 'error',
+            format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+          }),
+          new winston.transports.File({
+            filename: 'logs/combined.log',
+            format: winston.format.combine(winston.format.timestamp(), winston.format.json()),
+          }),
+        ],
+      }),
+    });
+
+    // Global Exception Filter
+    // Note: Sentry capture is now integrated inside HttpExceptionFilter
+    app.useGlobalFilters(new HttpExceptionFilter());
+
+    // Security Headers (Helmet)
+    app.use(helmet());
+
+    // Global Logging Interceptor
+    app.useGlobalInterceptors(new LoggingInterceptor());
+
+    // Trust Proxy (Required for Railway/Heroku/Vercel) to correctly detect HTTPS
+    const expressApp = app.getHttpAdapter().getInstance();
+    expressApp.set('trust proxy', 1);
+
+    // Enable global validation (class-validator)
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        transform: true,
+        forbidNonWhitelisted: true,
+      }),
+    );
+
+    // Enable CORS with credentials
+    app.enableCors({
+      origin: [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3002',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:3001',
+        'http://127.0.0.1:3002',
+        'https://frontend-production-c087.up.railway.app',
+        'https://plataformagest-odesportiva-production.up.railway.app',
       ],
-    }),
-  });
+      credentials: true,
+    });
 
-  // Global Exception Filter
-  // Note: Sentry capture is now integrated inside HttpExceptionFilter
-  app.useGlobalFilters(new HttpExceptionFilter());
+    app.use(cookieParser());
 
-  // Security Headers (Helmet)
-  app.use(helmet());
+    // Swagger Configuration
+    const config = new DocumentBuilder()
+      .setTitle('NovaScore API')
+      .setDescription('The NovaScore API description')
+      .setVersion('1.0')
+      .addBearerAuth()
+      .addTag('auth', 'Authentication endpoints')
+      .addTag('clubs', 'Club management')
+      .addTag('users', 'User management')
+      .addTag('players', 'Player management')
+      .addTag('teams', 'Team management')
+      .addTag('trainings', 'Training sessions management')
+      .addTag('payments', 'Payment tracking')
+      .addTag('matches', 'Match management')
+      .addTag('upload', 'File upload')
+      .addTag('absence-notices', 'Absence notices management')
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
 
-  // Global Logging Interceptor
-  app.useGlobalInterceptors(new LoggingInterceptor());
-
-  // Enable global validation (class-validator)
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      forbidNonWhitelisted: true,
-    }),
-  );
-
-  // Enable CORS with credentials
-  app.enableCors({
-    origin: [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'http://localhost:3002',
-      'http://127.0.0.1:3000',
-      'http://127.0.0.1:3001',
-      'http://127.0.0.1:3002',
-      'https://frontend-production-c087.up.railway.app',
-      'https://plataformagest-odesportiva-production.up.railway.app',
-    ],
-    credentials: true,
-  });
-
-  app.use(cookieParser());
-
-
-  // Swagger Configuration
-  const config = new DocumentBuilder()
-    .setTitle('NovaScore API')
-    .setDescription('The NovaScore API description')
-    .setVersion('1.0')
-    .addBearerAuth()
-    .addTag('auth', 'Authentication endpoints')
-    .addTag('clubs', 'Club management')
-    .addTag('users', 'User management')
-    .addTag('players', 'Player management')
-    .addTag('teams', 'Team management')
-    .addTag('trainings', 'Training sessions management')
-    .addTag('payments', 'Payment tracking')
-    .addTag('matches', 'Match management')
-    .addTag('upload', 'File upload')
-    .addTag('absence-notices', 'Absence notices management')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
-
-  const port = process.env.PORT || 3001;
-  await app.listen(port, '0.0.0.0');
-  console.log(`Application is running on: ${await app.getUrl()}`);
+    const port = process.env.PORT || 3001;
+    await app.listen(port, '0.0.0.0');
+    console.log(`Application is running on: ${await app.getUrl()}`);
+  } catch (error) {
+    console.error('Error starting application:', error);
+    process.exit(1);
+  }
 }
 bootstrap();
