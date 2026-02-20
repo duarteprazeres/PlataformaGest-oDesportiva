@@ -74,7 +74,7 @@ export const GlobalApi = {
     // For now, we will just implement what we have.
 
     async approveTransfer(requestId: string) {
-        const response = await fetch(`${API_URL}/athletes/transfers/${requestId}/approve`, {
+        const response = await fetch(`${API_URL}/athletes/transfer-requests/${requestId}/approve`, {
             method: 'PATCH',
             headers: getGlobalHeaders(),
         });
@@ -84,8 +84,7 @@ export const GlobalApi = {
 
     // Athlete Details
     async getAthleteHistory(athleteId: string) {
-        const response = await fetch(`${API_URL}/athletes/transfer-requests/${requestId}/approve`, {
-
+        const response = await fetch(`${API_URL}/athletes/${athleteId}/history`, {
             method: 'GET',
             headers: getGlobalHeaders(),
         });
