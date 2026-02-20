@@ -49,7 +49,7 @@ export const GlobalApi = {
 
     // Athletes
     async createPassport(data: any) {
-        const response = await fetch(`${API_URL}/athletes`, {
+        const response = await fetch(`${API_URL}/athletes/passport`, {
             method: 'POST',
             headers: getGlobalHeaders(),
             body: JSON.stringify(data),
@@ -57,6 +57,7 @@ export const GlobalApi = {
         if (!response.ok) throw new Error('Failed to create passport');
         return response.json();
     },
+
 
     async getMyAthletes() {
         const response = await fetch(`${API_URL}/athletes/my-athletes`, {
