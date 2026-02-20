@@ -59,7 +59,7 @@ export const GlobalApi = {
     },
 
     async getMyAthletes() {
-        const response = await fetch(`${API_URL}/athletes`, {
+        const response = await fetch(`${API_URL}/athletes/my-athletes`, {
             method: 'GET',
             headers: getGlobalHeaders(),
         });
