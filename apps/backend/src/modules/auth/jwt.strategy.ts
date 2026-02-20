@@ -7,6 +7,9 @@ import { JwtPayload } from './dto/jwt-payload.interface';
 
 import { UsersService } from '../users/users.service';
 
+import { UnauthorizedException } from '@nestjs/common';
+import { UserRole } from '@prisma/client';
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
@@ -30,10 +33,21 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: JwtPayload) {
-    // Verify if user exists and is valid (cached lookup)
+    // 1) Se for token de PAI GLOBAL, não uses usersService
+    if ((payload as any).type === 'GLOBAL_PARENT') {
+      return {
+        id: payload.sub,                 // id do globalParent
+        email: payload.email,
+        role: UserRole.PARENT,           // mapeia para o enum do Prisma
+        clubId: null,
+        globalParentId: payload.sub,     // chave usada no controller
+      };
+    }
+
+    // 2) Fluxo actual para utilizadores de clube
     const user = await this.usersService.findById(payload.sub);
     if (!user) {
-      return null; // or throw UnauthorizedException
+      throw new UnauthorizedException('User not found');
     }
 
     return {
