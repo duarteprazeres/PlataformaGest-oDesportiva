@@ -84,7 +84,8 @@ export const GlobalApi = {
 
     // Athlete Details
     async getAthleteHistory(athleteId: string) {
-        const response = await fetch(`${API_URL}/athletes/${athleteId}/history`, {
+        const response = await fetch(`${API_URL}/athletes/transfer-requests/${requestId}/approve`, {
+
             method: 'GET',
             headers: getGlobalHeaders(),
         });
