@@ -75,7 +75,7 @@ export async function lookupAthlete(params: { publicId?: string, citizenCard?: s
 }
 
 export async function requestTransfer(publicId: string) {
-    return fetchApi('/athletes/transfer-request', {
+    return fetchApi('/athletes/request-transfer', {
         method: 'POST',
         body: JSON.stringify({ publicId }),
     });
