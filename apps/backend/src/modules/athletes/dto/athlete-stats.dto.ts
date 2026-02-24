@@ -1,15 +1,16 @@
 export class AthleteStatsDto {
-    athleteId: string;
-    athleteName: string;
-
-    totalMatches: number;
-    totalGoals: number;
-    totalAssists: number;
-
-    clubsCount: number;
-    teamsCount: number;
-
-    yearsActive: number;
-    firstRegistration?: Date;
-    currentStatus: 'ACTIVE' | 'PENDING_WITHDRAWAL' | 'LEFT' | 'FREE_AGENT';
+    athleteId!: string;
+    athleteName!: string;
+    totalMatches!: number;
+    totalGoals!: number;
+    totalAssists!: number;
+    yellowCards!: number;
+    redCards!: number;
+    minutesPlayed!: number;
+    goalsPerMatch!: number;
+    assistsPerMatch!: number;
+    clubsCount!: number;
+    teamsCount!: number;
+    yearsActive!: number;
+    currentStatus!: string;
 }
