@@ -402,6 +402,10 @@ export default function PlayerProfile() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8fafc', fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      <button onClick={() => window.history.back()} style={{ position: 'fixed', top: '1.25rem', left: '1.25rem', zIndex: 50, padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.9)', border: '1px solid #e2e8f0', borderRadius: '0.5rem', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem', boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}>
+        ← Voltar
+      </button>
+
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '2rem' }}>
 
         {/* ── Banner ── */}
