@@ -348,7 +348,7 @@ export default function PlayerProfile() {
 
   useEffect(() => {
     if (!playerId) return;
-    fetchApi(`/athletes/${playerId}`)
+    fetchApi(`/players/${playerId}`)
       .then(data => {
         setPlayer({
           id: data.id,
