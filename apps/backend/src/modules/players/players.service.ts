@@ -94,7 +94,7 @@ export class PlayersService {
     return updated;
   }
 
-  async uploadPhoto(clubId: string, id: string, fileBuffer: Buffer, mimetype: string) {
+  async uploadPhoto(clubId: string, id: string, fileBuffer: Buffer, _mimetype: string) {
     await this.findOne(clubId, id);
 
     const photoUrl = await new Promise<string>((resolve, reject) => {

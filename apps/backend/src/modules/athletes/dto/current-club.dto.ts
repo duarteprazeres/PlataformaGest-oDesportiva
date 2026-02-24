@@ -1,6 +1,6 @@
 export class CurrentClubDto {
-    athleteId: string;
-    athleteName: string;
+    athleteId!: string;
+    athleteName!: string;
 
     // Club info
     clubId?: string;
