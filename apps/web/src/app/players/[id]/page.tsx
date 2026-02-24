@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { fetchApi } from '@/lib/api';
 
 type AttendanceStatus = 'present' | 'absent' | 'justified';
 type PlayerStatus = 'active' | 'injured' | 'suspended' | 'loaned';
