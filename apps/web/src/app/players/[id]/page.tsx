@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 type AttendanceStatus = 'present' | 'absent' | 'justified';
 type PlayerStatus = 'active' | 'injured' | 'suspended' | 'loaned';
@@ -44,38 +44,7 @@ const clubTeams: Team[] = [
   { id: '6', name: 'Sub-15' },
 ];
 
-const mockLog: AttendanceStatus[] = [
-  'present', 'present', 'present', 'present', 'present', 'present', 'absent', 'present', 'present', 'present',
-  'present', 'present', 'justified', 'present', 'present', 'present', 'present', 'absent', 'present', 'present',
-  'present', 'present', 'present', 'present', 'absent', 'present', 'present', 'justified', 'present', 'present',
-  'present', 'present', 'present', 'present', 'present', 'absent', 'present', 'present', 'present', 'present',
-  'present', 'present', 'justified', 'present', 'present', 'present', 'present', 'present',
-];
 
-const mockPlayer: Player = {
-  id: '123',
-  name: 'João Silva',
-  birthDate: '2000-03-15',
-  nationality: 'Portuguesa',
-  number: 10,
-  position: 'Médio Ofensivo',
-  team: { id: '1', name: 'Sénior A' },
-  status: 'active',
-  height: 178,
-  weight: 73,
-  foot: 'Direito',
-  stats: { games: 18, goals: 7, assists: 5, yellowCards: 3, redCards: 0, minutesPlayed: 1420 },
-  attendance: {
-    totalSessions: 48, attended: 41, missed: 4, justified: 3,
-    lastMonthRate: 92, streak: 8,
-    log: mockLog,
-  },
-  guardian: {
-    name: 'Carlos Silva', relation: 'Pai',
-    phone: '+351 912 345 678', email: 'carlos.silva@email.com',
-    altPhone: '+351 934 567 890',
-  },
-};
 
 const statusConfig: Record<PlayerStatus, { label: string; color: string; bg: string }> = {
   active: { label: 'Activo', color: '#16a34a', bg: '#f0fdf4' },
@@ -370,8 +339,44 @@ function EditDrawer({ player, teams, onSave, onClose }: {
 export default function PlayerProfile() {
   const params = useParams();
   const playerId = params.id as string;
-  const [player, setPlayer] = useState<Player>({ ...mockPlayer, id: playerId });
+  const [player, setPlayer] = useState<Player | null>(null);
+  const [loading, setLoading] = useState(true);
   const [editOpen, setEditOpen] = useState(false);
+
+  useEffect(() => {
+    if (!playerId) return;
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/athletes/${playerId}`, {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+    })
+      .then(res => { if (!res.ok) throw new Error('Não encontrado'); return res.json(); })
+      .then(data => {
+        setPlayer({
+          id: data.id,
+          name: `${data.firstName} ${data.lastName}`,
+          birthDate: data.birthDate || '',
+          nationality: data.nationality || 'Portuguesa',
+          number: data.jerseyNumber || 0,
+          position: data.position || data.category || '',
+          team: data.currentTeam ? { id: data.currentTeam.id || '1', name: data.currentTeam.name } : { id: '1', name: '' },
+          status: (data.status?.toLowerCase() as PlayerStatus) || 'active',
+          height: data.height || 0,
+          weight: data.weight || 0,
+          foot: data.foot || 'Direito',
+          stats: data.stats || { games: 0, goals: 0, assists: 0, yellowCards: 0, redCards: 0, minutesPlayed: 0 },
+          attendance: data.attendance || { totalSessions: 0, attended: 0, missed: 0, justified: 0, lastMonthRate: 0, streak: 0, log: [] },
+          guardian: data.guardian || { name: '', relation: '', phone: '', email: '' },
+        });
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [playerId]);
+
+  if (loading || !player) return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', fontFamily: 'system-ui' }}>
+      A carregar...
+    </div>
+  );
+
 
   const status = statusConfig[player.status];
   const posColor = positionColors[player.position] || '#4f46e5';
@@ -584,7 +589,7 @@ export default function PlayerProfile() {
           player={player}
           teams={clubTeams}
           onSave={(updates) => {
-            setPlayer((p) => ({ ...p, ...updates }));
+            setPlayer((p) => p ? { ...p, ...updates } : null);
             setEditOpen(false);
           }}
           onClose={() => setEditOpen(false)}
