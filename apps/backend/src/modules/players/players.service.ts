@@ -1,12 +1,15 @@
-import { Injectable, NotFoundException, BadRequestException, Inject } from '@nestjs/common';
+import {
+  Injectable, NotFoundException, BadRequestException, Inject,
+} from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { MetricsService } from '../metrics/metrics.service';
 import { PrismaService } from '../../database/prisma.service';
 import { Prisma } from '@prisma/client';
 import { CreatePlayerDto } from './dto/create-player.dto';
-
+import { UpdatePlayerDto } from './dto/update-player.dto';
 import { MailService } from '../mail/mail.service';
+import cloudinary from '../../config/cloudinary.config';
 
 @Injectable()
 export class PlayersService {
@@ -18,42 +21,29 @@ export class PlayersService {
   ) { }
 
   async create(clubId: string, data: CreatePlayerDto) {
-    // 1. Verify Parent exists and belongs to club
     const parent = await this.prisma.user.findFirst({
       where: { id: data.parentId, clubId },
     });
-    if (!parent) {
-      throw new BadRequestException('Parent not found in this club');
-    }
+    if (!parent) throw new BadRequestException('Parent not found in this club');
 
-    // 2. Verify Team exists (optional)
     if (data.currentTeamId) {
       const team = await this.prisma.team.findFirst({
         where: { id: data.currentTeamId, clubId },
       });
-      if (!team) {
-        throw new BadRequestException('Team not found in this club');
-      }
+      if (!team) throw new BadRequestException('Team not found in this club');
     }
 
-    // 3. Create Player (Trigger will ensure extra consistency)
     return this.prisma.player.create({
-      data: {
-        ...data,
-        birthDate: new Date(data.birthDate),
-        clubId,
-      },
+      data: { ...data, birthDate: new Date(data.birthDate), clubId },
     });
   }
 
   async findAll(clubId: string, teamId?: string) {
-    const whereClause: Prisma.PlayerWhereInput = { clubId };
-    if (teamId) {
-      whereClause.currentTeamId = teamId;
-    }
+    const where: Prisma.PlayerWhereInput = { clubId };
+    if (teamId) where.currentTeamId = teamId;
 
     return this.prisma.player.findMany({
-      where: whereClause,
+      where,
       include: {
         currentTeam: true,
         parent: {
@@ -75,18 +65,56 @@ export class PlayersService {
 
     const player = await this.prisma.player.findFirst({
       where: { id, clubId },
-      include: {
-        currentTeam: true,
-        parent: true,
-      },
+      include: { currentTeam: true, parent: true },
     });
 
-    if (!player) {
-      throw new NotFoundException(`Player with ID ${id} not found in this club`);
+    if (!player) throw new NotFoundException(`Player ${id} not found`);
+
+    await this.cacheManager.set(cacheKey, player, 900000);
+    return player;
+  }
+
+  async update(clubId: string, id: string, data: UpdatePlayerDto) {
+    await this.findOne(clubId, id);
+
+    if (data.currentTeamId) {
+      const team = await this.prisma.team.findFirst({
+        where: { id: data.currentTeamId, clubId },
+      });
+      if (!team) throw new BadRequestException('Team not found in this club');
     }
 
-    await this.cacheManager.set(cacheKey, player, 900000); // 15 min
-    return player;
+    const updated = await this.prisma.player.update({
+      where: { id },
+      data,
+      include: { currentTeam: true, parent: true },
+    });
+
+    await this.cacheManager.del(`player:${clubId}:${id}`);
+    return updated;
+  }
+
+  async uploadPhoto(clubId: string, id: string, fileBuffer: Buffer, mimetype: string) {
+    await this.findOne(clubId, id);
+
+    const photoUrl = await new Promise<string>((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        { folder: `players/${clubId}`, public_id: id, overwrite: true, resource_type: 'image' },
+        (error, result) => {
+          if (error || !result) return reject(error);
+          resolve(result.secure_url);
+        },
+      );
+      uploadStream.end(fileBuffer);
+    });
+
+    const updated = await this.prisma.player.update({
+      where: { id },
+      data: { photoUrl },
+    });
+
+    await this.cacheManager.del(`player:${clubId}:${id}`);
+    return updated;
   }
 
   async terminateLink(
@@ -105,7 +133,6 @@ export class PlayersService {
       throw new BadRequestException('Player already withdrawn');
     }
 
-    // Prepare update data
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const updateData: any = {
       status: 'LEFT',
@@ -113,12 +140,11 @@ export class PlayersService {
       destinationClubEmail: data.destinationEmail,
       withdrawalLetterUrl: data.letterUrl,
       currentTeamId: null,
-      athleteId: null, // Free passport
+      athleteId: null,
       withdrawalRequestedAt: new Date(),
     };
 
     if (data.sendEmail && data.destinationEmail && data.letterUrl) {
-      // Send email
       const club = await this.prisma.club.findUnique({ where: { id: clubId } });
       await this.mailService.sendWithdrawalPackage(
         data.destinationEmail,
@@ -134,10 +160,7 @@ export class PlayersService {
       data: updateData,
     });
 
-    // Invalidate cache
-    const cacheKey = `player:${clubId}:${playerId}`;
-    await this.cacheManager.del(cacheKey);
-
+    await this.cacheManager.del(`player:${clubId}:${playerId}`);
     return updated;
   }
 }

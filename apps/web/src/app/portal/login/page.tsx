@@ -21,7 +21,14 @@ export default function PortalLoginPage() {
         setLoading(true);
 
         try {
-            await GlobalApi.login({ email, password });
+            const data = await GlobalApi.login({ email, password });
+            // data = { access_token, user }
+
+            // Guardar token (solução simples para já)
+            if (data?.access_token) {
+                localStorage.setItem('global_token', data.access_token);
+            }
+
             router.push('/portal/dashboard');
         } catch (err: any) {
             setError(err.message || 'Login falhou. Verifique as credenciais.');
@@ -29,6 +36,7 @@ export default function PortalLoginPage() {
             setLoading(false);
         }
     };
+
 
     return (
         <div className={styles.container}>
