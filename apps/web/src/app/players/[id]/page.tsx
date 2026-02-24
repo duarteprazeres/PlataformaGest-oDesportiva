@@ -374,7 +374,25 @@ export default function PlayerProfile() {
       });
   }, [playerId]);
 
+  if (loading) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      A carregar...
+    </div>
+  );
 
+  if (!player) return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}>
+      <div style={{ textAlign: 'center' }}>
+        <p style={{ fontSize: '1.2rem', color: '#64748b' }}>Jogador não encontrado</p>
+        <button onClick={() => window.history.back()} style={{ marginTop: '1rem', padding: '0.5rem 1.5rem', cursor: 'pointer' }}>
+          Voltar
+        </button>
+      </div>
+    </div>
+  );
+
+  if (loading) return <div style={{ padding: '2rem', textAlign: 'center' }}>A carregar...</div>;
+  if (!player) return <div style={{ padding: '2rem', textAlign: 'center' }}>Jogador não encontrado.</div>;
 
   const status = statusConfig[player.status];
   const posColor = positionColors[player.position] || '#4f46e5';
