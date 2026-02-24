@@ -126,3 +126,28 @@ export const GlobalApi = {
     createPassport: async (data: any) => fetchApi('/athletes/passport', { method: 'POST', body: JSON.stringify(data) }),
     logout: () => { /* Handle logout client side mostly */ }
 };
+
+export async function getPlayer(id: string) {
+    return fetchApi(`/players/${id}`);
+}
+
+export async function updatePlayer(id: string, data: { jerseyNumber?: number; currentTeamId?: string; status?: string }) {
+    return fetchApi(`/players/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify(data),
+    });
+}
+
+
+export async function uploadPlayerPhoto(id: string, file: File) {
+    const formData = new FormData();
+    formData.append('photo', file);
+    return fetchApi(`/players/${id}/photo`, {
+        method: 'POST',
+        body: formData,
+    });
+}
+
+export async function getClubTeams() {
+    return fetchApi('/teams');
+}
