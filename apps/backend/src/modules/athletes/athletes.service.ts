@@ -21,7 +21,7 @@ export class AthletesService {
     private prisma: PrismaService,
     private notificationsService: NotificationsService,
     private mailService: MailService,
-  ) {}
+  ) { }
 
   // Helper to generate short Public ID
   private generatePublicId(): string {
@@ -75,6 +75,81 @@ export class AthletesService {
 
     return athlete;
   }
+
+  async findById(id: string) {
+    const athlete = await this.prisma.athlete.findUnique({
+      where: { id },
+      include: {
+        players: {
+          where: {
+            OR: [{ status: 'ACTIVE' }, { status: 'PENDING_WITHDRAWAL' }],
+          },
+          include: {
+            currentTeam: { select: { id: true, name: true } },
+            parent: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+            matchCallups: {
+              where: { played: true },
+              select: {
+                goalsScored: true,
+                minutesPlayed: true,
+                yellowCards: true,
+                redCard: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!athlete) throw new NotFoundException('Athlete not found');
+
+    const player = athlete.players[0];
+    const callups = player?.matchCallups || [];
+
+    return {
+      id: athlete.id,
+      firstName: athlete.firstName,
+      lastName: athlete.lastName,
+      birthDate: athlete.birthDate,
+      photoUrl: player?.photoUrl || null,
+      height: player?.heightCm || null,
+      weight: player?.weightKg ? Number(player.weightKg) : null,
+      jerseyNumber: player?.jerseyNumber || null,
+      position: player?.preferredPosition || null,
+      status: player?.status || 'FREE_AGENT',
+      currentTeam: player?.currentTeam || null,
+      guardian: player?.parent ? {
+        name: `${player.parent.firstName} ${player.parent.lastName}`,
+        email: player.parent.email,
+        phone: '',
+        relation: 'Encarregado de Educação',
+      } : null,
+      stats: {
+        games: callups.length,
+        goals: callups.reduce((s: number, c: { goalsScored: number }) => s + c.goalsScored, 0),
+        assists: 0,
+        yellowCards: callups.reduce((s: number, c: { yellowCards: number }) => s + c.yellowCards, 0),
+        redCards: callups.filter((c: { redCard: boolean }) => c.redCard).length,
+        minutesPlayed: callups.reduce((s: number, c: { minutesPlayed: number }) => s + c.minutesPlayed, 0),
+      },
+      attendance: {
+        totalSessions: 0,
+        attended: 0,
+        justified: 0,
+        missed: 0,
+        streak: 0,
+        log: [],
+      },
+    };
+  }
+
+
 
   // 2b. Get Athlete by Public ID (Legacy/Direct)
   async findByPublicId(publicId: string) {
@@ -385,7 +460,7 @@ export class AthletesService {
     const avgRating =
       ratingsWithValues.length > 0
         ? ratingsWithValues.reduce((sum, m) => sum + Number(m.coachRating), 0) /
-          ratingsWithValues.length
+        ratingsWithValues.length
         : null;
 
     const uniqueClubs = new Set(athlete.players.map((p) => p.club.id));

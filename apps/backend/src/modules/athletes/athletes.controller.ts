@@ -28,7 +28,7 @@ import { RequestWithUser } from '../../common/interfaces/request-with-user.inter
 @Controller('athletes')
 @UseGuards(JwtAuthGuard)
 export class AthletesController {
-  constructor(private readonly athletesService: AthletesService) {}
+  constructor(private readonly athletesService: AthletesService) { }
 
   @Post('passport')
   @Roles(UserRole.PARENT)
@@ -64,6 +64,10 @@ export class AthletesController {
   async approveTransfer(@Request() req: RequestWithUser, @Param('id') requestId: string) {
     if (!req.user.globalParentId) throw new BadRequestException('User is not a global parent');
     return this.athletesService.approveTransfer(req.user.globalParentId, requestId);
+  }
+  @Get(':id')
+  async getById(@Param('id') id: string) {
+    return this.athletesService.findById(id);
   }
 
   @Get(':id/history')
