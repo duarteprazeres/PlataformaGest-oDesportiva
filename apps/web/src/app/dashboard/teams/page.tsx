@@ -28,6 +28,10 @@ export default function TeamsPage() {
     const [seasons, setSeasons] = useState<Season[]>([]);
     const [selectedSeason, setSelectedSeason] = useState('');
     const [teams, setTeams] = useState<Team[]>([]);
+    const [showCreate, setShowCreate] = useState(false);
+    const [newTeamName, setNewTeamName] = useState('');
+    const [newTeamCategory, setNewTeamCategory] = useState('');
+    const [creating, setCreating] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
 
     // Initial load: Fetch seasons
@@ -75,6 +79,27 @@ export default function TeamsPage() {
         setSelectedSeason(seasonId);
     };
 
+    const handleCreateTeam = async () => {
+        if (!newTeamName.trim()) return;
+        setCreating(true);
+        try {
+            await fetchApi('/teams', {
+                method: 'POST',
+                body: JSON.stringify({ name: newTeamName, category: newTeamCategory, seasonId: selectedSeason }),
+            });
+            setShowCreate(false);
+            setNewTeamName('');
+            setNewTeamCategory('');
+            const teamsData = await fetchApi(`/teams?seasonId=${selectedSeason}`);
+            setTeams(teamsData);
+        } catch (err) {
+            alert('Erro ao criar equipa');
+        } finally {
+            setCreating(false);
+        }
+    };
+
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-8">
             <div className="max-w-7xl mx-auto">
@@ -91,7 +116,7 @@ export default function TeamsPage() {
                         >
                             Voltar
                         </button>
-                        <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-sm transition-colors">
+                        <button onClick={() => setShowCreate(true)} className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-sm transition-colors">
                             + Nova Equipa
                         </button>
                     </div>
@@ -179,6 +204,42 @@ export default function TeamsPage() {
                     )}
                 </div>
             </div>
+            {showCreate && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl p-6 w-96">
+                        <h2 className="text-xl font-bold mb-4">Criar Nova Equipa</h2>
+                        <input
+                            type="text"
+                            placeholder="Nome da Equipa"
+                            value={newTeamName}
+                            onChange={(e) => setNewTeamName(e.target.value)}
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg mb-2"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Categoria"
+                            value={newTeamCategory}
+                            onChange={(e) => setNewTeamCategory(e.target.value)}
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg mb-4"
+                        />
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={() => setShowCreate(false)}
+                                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-lg"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={handleCreateTeam}
+                                disabled={creating}
+                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg disabled:opacity-50"
+                            >
+                                {creating ? 'A Criar...' : 'Criar'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
