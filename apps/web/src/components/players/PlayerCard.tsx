@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { User, Shield, Phone, Calendar, XCircle } from 'lucide-react';
 import WithdrawalModal from '../WithdrawalModal';
 import styles from './PlayerCard.module.css';
+import Link from "next/link";
 
 interface Player {
     id: string;
@@ -63,7 +64,9 @@ export const PlayerCard: React.FC<PlayerCardProps> = ({ player, onUpdate }) => {
                 </div>
 
                 <div className={styles.actions}>
-                    <button className={styles.viewBtn}>View Profile</button>
+                    <Link href={`/players/${player.id}`} className={styles.viewBtn}>
+                        View Profile
+                    </Link>
                     {player.status !== 'LEFT' && (
                         <button
                             className={styles.withdrawBtn}
