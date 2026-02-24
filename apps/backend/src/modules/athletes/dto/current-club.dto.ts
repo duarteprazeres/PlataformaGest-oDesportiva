@@ -9,7 +9,7 @@ export class CurrentClubDto {
     teamName?: string;
 
     // Player status
-    status: 'ACTIVE' | 'PENDING_WITHDRAWAL' | 'LEFT' | 'FREE_AGENT';
+    status!: 'ACTIVE' | 'PENDING_WITHDRAWAL' | 'LEFT' | 'FREE_AGENT';
     withdrawalRequestedAt?: Date;
     coolOffEndsAt?: Date;
     hoursRemaining?: number;
