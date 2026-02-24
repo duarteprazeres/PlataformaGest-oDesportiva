@@ -368,14 +368,24 @@ export default function PlayerProfile() {
         });
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err) => {
+        console.error('Erro ao carregar jogador:', err);
+        setLoading(false);
+      });
+
   }, [playerId]);
 
-  if (loading || !player) return (
+  if (loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', fontFamily: 'system-ui' }}>
       A carregar...
     </div>
   );
+  if (!player) return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8fafc', fontFamily: 'system-ui' }}>
+      Jogador não encontrado.
+    </div>
+  );
+
 
 
   const status = statusConfig[player.status];
